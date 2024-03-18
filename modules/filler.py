@@ -113,7 +113,7 @@ class Filler:
     def get_dest_chains():
         chains_count = random.randint(*FillerSettings.to_chains_count)
         if chains_count <= len(FillerSettings.to_chains):
-            return random.choices(FillerSettings.to_chains, k = chains_count)
+            return random.sample(FillerSettings.to_chains, chains_count)
         else:
             logger.error(f"Error during destination chains selection: {chains_count} (to_chains_count) > {len(FillerSettings.to_chains)} (to_chains amount). You can't select more chains than you have in to_chains setting.")
             return False
