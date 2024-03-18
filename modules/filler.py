@@ -124,7 +124,7 @@ class Filler:
         chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
 
         while True:
-            to_chains = random.choices(chains_list, k = chains_count)
+            to_chains = random.sample(chains_list, chains_count)
             func = Filler(number, key, from_chain, to_chains)
 
             if await func.has_balance() and func.is_supported_networks():
