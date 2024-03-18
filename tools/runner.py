@@ -18,10 +18,10 @@ async def worker(function):
 async def process_module(func, wallets):
     number = 0
     tasks = []
-    dest_chain = await get_dest_chain(func)
 
     for key in wallets:
         number += 1
+        dest_chain = await get_dest_chain(func)
         if is_private_key:
             if dest_chain is not False:
                 wallet_number =  f'[{number}/{len(wallets)}]'
