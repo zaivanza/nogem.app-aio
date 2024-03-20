@@ -6,7 +6,7 @@ MAX_TX_WAITING_TIME = 200
 WALLETS = read_txt("data/wallets.txt")
 ERC20_ABI = load_json("tools/contracts/erc20.json")
 
-FILLER_VALUE = [0.000005, 0.0000005, 8] 
+FILLER_VALUE = [0.0000051234, 0.00000051234, 8, 11] 
 
 PRICES_NATIVE = asyncio.run(get_chain_prices())
 

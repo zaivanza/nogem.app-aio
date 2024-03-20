@@ -104,7 +104,7 @@ class Filler:
         return to_chain_ids
 
     def get_filler_values(self):
-        filler_values_list = [Web3.to_wei(round(random.uniform(FILLER_VALUE[0], FILLER_VALUE[1]), FILLER_VALUE[2]), 'ether') for _ in self.to_chains]
+        filler_values_list = [Web3.to_wei(round(random.uniform(FILLER_VALUE[0], FILLER_VALUE[1]), random.randint(FILLER_VALUE[2], FILLER_VALUE[3])), 'ether') for _ in self.to_chains]
         return filler_values_list
 
     def get_base_chains():
