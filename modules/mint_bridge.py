@@ -5,7 +5,7 @@ from config import PRICES_NATIVE
 from modules.bridge import Bridge
 from modules.mint import Mint
 
-#from settings import MintBridgeSettings
+from settings import MintBridgeSettings
 from tools.gas_boss import GasBoss
 
 class MintBridge:

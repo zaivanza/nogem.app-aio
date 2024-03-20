@@ -2,10 +2,10 @@
 from loguru import logger
 import asyncio
 
+from config import PRICES_NATIVE
 from tools.gas_boss import GasBoss
 from tools.helpers import async_sleeping, get_contract
-#from settings import MintSettings
-from settings import (DELAY_SLEEP, RETRY)
+from settings import (DELAY_SLEEP, RETRY, MintSettings)
 
 class Mint:
     def __init__(self, number, key, chain, mint_count) -> None:
@@ -62,16 +62,28 @@ class Mint:
             return contract_txn
         
         except Exception as error:
-            logger.info(error)
+            logger.warning(error)
             return False
     
     async def calculate_cost(self):
-        contract_txn =  await self.get_txn()
-        if not contract_txn: 
+        if await self.has_balance():
+            contract_txn =  await self.get_txn()
+            print(contract_txn)
+            if not contract_txn: 
+                return False
+            mint_cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
+            total_cost = mint_cost * self.mint_count
+            return total_cost
+        else:
             return False
-        mint_cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
-        total_cost = mint_cost * self.mint_count
-        return total_cost
+    
+    async def has_balance(self):
+        balance = await self.manager.get_balance_native()
+        balance_native = self.manager.web3.from_wei(balance,'ether')
+        if  balance_native == 0:
+            logger.warning("Not enough balance")
+            return False
+        return True
 
     def get_base_chains():
         return MintSettings.chains
