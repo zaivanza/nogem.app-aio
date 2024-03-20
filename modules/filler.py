@@ -122,7 +122,8 @@ class Filler:
         chains_count = random.randint(*FillerSettings.to_chains_count)
 
         chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
-
+        chains_list.remove(from_chain)
+        
         while True:
             to_chains = random.sample(chains_list, chains_count)
             func = Filler(number, key, from_chain, to_chains)
