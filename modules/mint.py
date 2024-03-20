@@ -68,7 +68,6 @@ class Mint:
     async def calculate_cost(self):
         if await self.has_balance():
             contract_txn =  await self.get_txn()
-            print(contract_txn)
             if not contract_txn: 
                 return False
             mint_cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2

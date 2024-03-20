@@ -21,18 +21,18 @@ class MintBridge:
 
     async def run(self):
         mint_func = Mint(self.number, self.key, self.from_chain, self.amount)
-        await mint_func.run()
-        
-        bridge_func = Bridge(self.number, self.key, self.from_chain, self.to_chain, self.amount)
-        await bridge_func.run()
+        result = await mint_func.run()
+        if result is not False:
+            bridge_func = Bridge(self.number, self.key, self.from_chain, self.to_chain, self.amount)
+            await bridge_func.run()
 
     async def calculate_cost(self):
         mint_func = Mint(self.number, self.key, self.from_chain, self.amount)
         mint_cost = await mint_func.calculate_cost()
-        bridge_func = Bridge(self.number, self.key, self.from_chain, self.to_chain, self.amount)
-        bridge_cost = await bridge_func.calculate_cost()
-
-        if not mint_cost or not bridge_cost:
+        if mint_cost is not False:
+            bridge_func = Bridge(self.number, self.key, self.from_chain, self.to_chain, self.amount)
+            bridge_cost = await bridge_func.calculate_cost()
+        elif not mint_cost or not bridge_cost:
             return False
         
         total_cost = mint_cost + bridge_cost

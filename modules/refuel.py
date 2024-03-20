@@ -35,7 +35,7 @@ class Refuel:
         if (LAYERZERO_CHAINS_ID[self.from_chain], LAYERZERO_CHAINS_ID[self.to_chain]) in EXCLUDED_LZ_PAIRS or (LAYERZERO_CHAINS_ID[self.to_chain], LAYERZERO_CHAINS_ID[self.from_chain]) in EXCLUDED_LZ_PAIRS:
                     logger.error(f'{self.module_str} | this pair of networks is not available for bridge')
                     return False
-        await self.setup()
+        
         contract_txn = await self.get_txn()
 
         if not contract_txn:
@@ -70,8 +70,8 @@ class Refuel:
             await self.check_refuel_fees()
 
     async def get_adapterParams(self, amount: int):
-        minDstGas = await self.get_min_dst_gas_lookup(LAYERZERO_CHAINS_ID[self.to_chain], 0)     
-        print(minDstGas)   
+        minDstGas = await self.get_min_dst_gas_lookup(LAYERZERO_CHAINS_ID[self.to_chain], 0)   
+        print(minDstGas)    
         addressOnDist = Account().from_key(self.key).address
         return encode_packed(
             ["uint16", "uint256", "uint256", "address"],
@@ -79,14 +79,18 @@ class Refuel:
         )
     
     async def get_min_dst_gas_lookup(self, dstChainId, funcType):
-        print(dstChainId, funcType)
         return await self.contract.functions.minDstGasLookup(dstChainId, funcType).call()
 
     async def get_txn(self):
         try:
+            if (LAYERZERO_CHAINS_ID[self.from_chain], LAYERZERO_CHAINS_ID[self.to_chain]) in EXCLUDED_LZ_PAIRS or (LAYERZERO_CHAINS_ID[self.to_chain], LAYERZERO_CHAINS_ID[self.from_chain]) in EXCLUDED_LZ_PAIRS:
+                logger.warning(f'{self.module_str} | this pair of networks is not available for bridge')
+                return False
+
+            await self.setup()
+
             dst_contract_address = encode_packed(["address"], [NOGEM_REFUEL_CONTRACTS[self.to_chain]])
             send_value = await self.contract.functions.estimateSendFee(LAYERZERO_CHAINS_ID[self.to_chain], dst_contract_address, self.adapterParams).call()
-
             contract_txn = await self.contract.functions.refuel(
                     LAYERZERO_CHAINS_ID[self.to_chain],
                     dst_contract_address,
@@ -104,8 +108,6 @@ class Refuel:
             contract_txn = await self.manager.add_gas_price(contract_txn)
             contract_txn = await self.manager.add_gas_limit_layerzero(contract_txn)
 
-            if self.manager.get_total_fee(contract_txn) == False: return False
-
             if self.swap_all_balance:
                 gas_gas = int(contract_txn['gas'] * contract_txn['gasPrice'])
                 contract_txn['value'] = contract_txn['value'] - gas_gas
@@ -113,11 +115,11 @@ class Refuel:
             if self.amount >= self.min_amount_swap:
                 return contract_txn
             else:
-                logger.error(f"{self.module_str} | {self.amount} (amount) < {self.min_amount_swap} (min_amount_swap)")
+                logger.warning(f"{self.module_str} | {self.amount} (amount) < {self.min_amount_swap} (min_amount_swap)")
                 return False
             
         except Exception as error:
-            logger.error(error)
+            logger.warning(error)
             return False
 
     async def check_refuel_fees(self):
@@ -141,6 +143,15 @@ class Refuel:
                         result[from_chain].update({to_chain:None})
         sys.exit()
 
+    async def calculate_cost(self):
+        contract_txn = await self.get_txn()
+
+        if not contract_txn:
+            return False        
+        
+        total_cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
+        return total_cost
+    
     def get_base_chains():
         return RefuelSettings.from_chain
     

@@ -9,36 +9,46 @@ MAX_WAITING_NFT = 200   # Maximum duration (in seconds) to await the arrival of 
 class MintSettings:
     '''
     Minting operation
-    Chains : arbitrum | optimism | bsc | polygon | base | avalanche | ethereum | scroll | zksync | linea | nova | zora | polygon_zkevm | fantom | core | celo | harmony | canto | starknet | mantle
-    '''
 
-    chains = ['scroll','bsc', 'avalanche']  # The networks where NFTs will be minted.
-    amount_mint = [1, 1]  # The exact number of NFTs to mint.
+    Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn
+           | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
+    '''
+    # The networks where NFTs will be minted.
+    chains = ['scroll','bsc', 'fantom']  
+    # The networks where NFTs will be minted.
+    amount_mint = [1, 1]  
 
 
 class BridgeSettings:
         '''
         Bridging operation
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
-        Chains : arbitrum | optimism | bsc | polygon | base | avalanche | ethereum | scroll | zksync | linea | nova | zora | polygon_zkevm | fantom | core | celo | harmony | canto | starknet | mantle
+
+        Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn
+               | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
         '''
 
         # The source network where NFTs will be searched; the final choice is random.
-        from_chain = ['optimism', 'zksync']
+        from_chain = ['fantom']
         # Potential destination networks; the final choice is random.
-        to_chain = ['celo','scroll']
-
-        amount = 1  # The number of NFTs to bridge.
+        to_chain = ['polygon']
+        # The number of NFTs to bridge.
+        amount = 1  
         # If True, all available NFTs will be bridged if they exceed the specified 'amount'.
         bridge_all = False
 
 class MintBridgeSettings:
-        '''Combination of minting and bridging operations'''
+        '''
+        Combination of minting and bridging operations
+
+        Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn
+               | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
+        '''
 
         # Preferred source networks due to lower costs; selection is random if list is empty.
-        from_chain = ['optimism', 'zksync', 'ethereum', 'linea', 'polygon']
+        from_chain = ['scroll', 'bsc', 'linea', 'fantom']
         # Preferred destination networks due to lower costs; selection is random if list is empty.
-        to_chain = ['base', 'nova']
+        to_chain = ['polygon','arbitrum']
         # Maximum acceptable cost for the process in dollars ($).
         max_price = 3
         # Range defining the minimum and maximum number of NFTs to be minted and bridged.
@@ -49,14 +59,14 @@ class RefuelSettings:
     '''
     Gas refuel via nogem
 
-    from_chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | zksync | polygon_zkevm | nova | canto | zora | scroll | harmony | gnosis | core | base | mantle
-    to_chains   : avalanche | bsc | arbitrum | optimism | fantom | harmony | celo | moonbeam | gnosis | metis | core | polygon_zkevm | canto | zksync | nova | zora | base | scroll | mantle
+     Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn | manta | loot | orderly
+            | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen | xpla | rari
     '''
 
     # Networks from which you want to perform refuel (>= 1 network)
     from_chain = ['fantom']
     # Networks to which you want to perform refuel (>= 1 network)
-    to_chain = ['mantle']
+    to_chain = ['avalanche']
 
     # Obtain from a certain amount of native token of the to_chain network
     amount_from = 0.0000001
@@ -77,10 +87,8 @@ class FillerSettings:
     '''
     Gas filler via nogem
 
-    from_chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
-                  conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okt | orderly | rari | viction | xpla | 
-    to_chains   : avalanche | bsc | arbitrum | optimism | fantom  | celo | gnosis | metis | core | canto  | nova | zora | base | scroll | mantle | polygon |
-                  astar | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okt | orderly | rari | viction | xpla |
+    Chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
+           | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
     '''
 
     # Networks from which you want to perform refill

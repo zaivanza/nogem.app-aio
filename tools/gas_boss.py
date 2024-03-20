@@ -65,11 +65,6 @@ class GasBoss:
         except Exception as error:
             logger.error(error)
 
-    def get_total_fee(self, contract_txn):
-        gas = int(contract_txn['gas'] * contract_txn['gasPrice'])
-        gas = decimalToInt(gas, 18) * PRICES_NATIVE[self.chain]
-        logger.info(f'total_gas : {round(gas)} $')
-
     async def sign_tx(self, contract_txn):
         signed_tx = self.web3.eth.account.sign_transaction(contract_txn, self.key)
         raw_tx_hash = await self.web3.eth.send_raw_transaction(signed_tx.rawTransaction)

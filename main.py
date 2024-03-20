@@ -23,7 +23,7 @@ def get_module():
             Choice("3) Bridge", Bridge),
             Choice("4) Refuel", Refuel),
             Choice("5) Filler", Filler),
-            Choice(" Exit", "exit"),
+            Choice("6) Exit", "exit"),
         ],
         pointer="💠 "
     ).ask()

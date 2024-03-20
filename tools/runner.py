@@ -25,12 +25,6 @@ async def process_module(func, wallets):
         if is_private_key:
             if dest_chain is not False:
                 wallet_number =  f'[{number}/{len(wallets)}]'
-                base_chain = func.get_base_chains()
-                function = get_func(func, key, wallet_number, base_chain[0], dest_chain)
-                await function.run()
-                exit()
-                
-                
                 mint_count = random.randint(*MintSettings.amount_mint)
                 base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
             
