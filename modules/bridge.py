@@ -2,7 +2,7 @@
 import asyncio
 from modules.mint import get_contract
 from tools.contracts.contract import ZERO_ADDRESS,LAYERZERO_CHAINS_ID, EXCLUDED_LZ_PAIRS
-#from settings import BridgeSettings
+from settings import BridgeSettings
 from settings import DELAY_SLEEP, RETRY
 from tools.gas_boss import GasBoss
 from tools.helpers import async_sleeping, get_balance_nfts_amount, get_balance_nfts_id
@@ -22,13 +22,13 @@ class Bridge:
     async def run(self, retry=0):
 
         if (LAYERZERO_CHAINS_ID[self.from_chain], LAYERZERO_CHAINS_ID[self.to_chain]) in EXCLUDED_LZ_PAIRS or (LAYERZERO_CHAINS_ID[self.to_chain], LAYERZERO_CHAINS_ID[self.from_chain]) in EXCLUDED_LZ_PAIRS:
-            logger.error(f'{self.module_str} | this pair of networks is not available for bridge')
+            logger.warning(f'{self.module_str} | this pair of networks is not available for bridge')
             return False
 
         nft_count, tokens_ids = await self.get_bridge_details()
 
         if nft_count == 0:
-            logger.error(f'{self.module_str} | nft balance = 0')
+            logger.warning(f'{self.module_str} | nft balance = 0')
             return False
         
         bridge_count = self.get_bridge_count(nft_count)
@@ -38,20 +38,20 @@ class Bridge:
             
             contract_txn = await self.get_txn()
             if not contract_txn:
-                logger.error(f'{self.module_str} | error getting contract_txn')
+                logger.warning(f'{self.module_str} | error getting contract_txn')
                 continue
             status, tx_link = await self.manager.send_tx(contract_txn)
 
             if status == 1:
                 logger.success(f'{self.module_str} | {tx_link}')
             else:
-                logger.error(f'{self.number} {self.manager.address} | tx is failed | {tx_link}')
+                logger.warning(f'{self.number} {self.manager.address} | tx is failed | {tx_link}')
                 if retry < RETRY:
                     logger.info(f'try again in 10 sec.')
                     await asyncio.sleep(10)
                     return await self.run(retry+1)
                 else:
-                    logger.error(f'{self.number} {function.manager.address} | bridge is failed for this address, moving to next wallet | {tx_link}')
+                    logger.warning(f'{self.number} {function.manager.address} | bridge is failed for this address, moving to next wallet | {tx_link}')
 
             if i+1 != bridge_count:
                 await async_sleeping(*DELAY_SLEEP)
@@ -153,10 +153,11 @@ class Bridge:
         total_cost = 0
         nft_count, tokens_ids = await self.get_bridge_details()
         if nft_count == 0 or tokens_ids == 0:
-            logger.info(f'{self.module_str} | nft balance = 0')
+            logger.warning(f'{self.module_str} | nft balance = 0')
             return False
 
         bridge_count = self.get_bridge_count(nft_count)  
+
         for i in range(bridge_count):
             self.token_id = tokens_ids[i]
             contract_txn = await self.get_txn()

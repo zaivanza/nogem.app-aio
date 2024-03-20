@@ -4,7 +4,7 @@ from modules.filler import Filler
 from modules.mint import Mint
 from modules.mint_bridge import MintBridge
 from modules.refuel import Refuel
-#from settings import MintSettings
+from settings import MintSettings
 from settings import IS_SLEEP, DELAY_SLEEP, FillerSettings
 
 from tools.helpers import async_sleeping, is_private_key
@@ -25,22 +25,22 @@ async def process_module(func, wallets):
         if is_private_key:
             if dest_chain is not False:
                 wallet_number =  f'[{number}/{len(wallets)}]'
-                #mint_count = random.randint(*MintSettings.amount_mint)
-                base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count=0) 
+                mint_count = random.randint(*MintSettings.amount_mint)
+                base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
             
                 if base_chain is not None:
-                    function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count=0)
+                    function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
                     tasks.append(asyncio.create_task(worker(function)))
         else:
             logger.error(f"{key} isn't private key")
 
         await asyncio.gather(*tasks)
 
-        if IS_SLEEP:
+        if IS_SLEEP and number != len(wallets):
             await async_sleeping(*DELAY_SLEEP)
 
 async def get_dest_chain(func):
-    if func == Bridge or func == MintBridge:
+    if func == Bridge or func == MintBridge or func == Refuel:
         return random.choice(func.get_dest_chains())
     elif func == Filler:
         if not FillerSettings.is_cheap_to_chains:
@@ -56,7 +56,7 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
         logger.info(f"{number} Checking balance in {chain}")
         to_chain = dest_chain
 
-        if to_chain is None:
+        if func == Filler:
             to_chain = await func.get_cheap_chains(number, key, chain)
 
         if to_chain is not False:
@@ -69,6 +69,6 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
     logger.error(f'Execution is failed in all base chains {base_chains}. Please, check warnings from logs above to identify the issue.')               
     return None, dest_chain
 
-def get_func(func, key, number, base_chain, dest_chain, mint_count):
+def get_func(func, key, number, base_chain, dest_chain, mint_count=0):
     function_instance = func(number, key, base_chain, dest_chain) if func != Mint else func(number, key, base_chain, mint_count)
     return function_instance
