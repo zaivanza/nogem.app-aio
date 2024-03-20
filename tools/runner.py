@@ -66,7 +66,7 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
                 balance = await function.manager.get_balance_native()
                 if balance >= total_cost:
                     return chain, to_chain
-    logger.error(f'Not enough balance in all base chains {base_chains}')             
+    logger.error(f'Execution is failed in all base chains {base_chains}. Please, check warnings from logs above to identify the issue.')               
     return None, dest_chain
 
 def get_func(func, key, number, base_chain, dest_chain, mint_count):
