@@ -31,7 +31,8 @@ class Filler:
     async def run(self, retry=0):
         logger.info(f'{self.module_str}')
         
-        self.is_supported_networks()
+        if not self.is_supported_networks():
+            logger.error(f'{self.module_str} | this pair of networks is not available for bridge')
 
         contract_txn = await self.get_txn()
 
@@ -104,7 +105,7 @@ class Filler:
         return to_chain_ids
 
     def get_filler_values(self):
-        filler_values_list = [Web3.to_wei(round(random.uniform(FILLER_VALUE[0], FILLER_VALUE[1]), FILLER_VALUE[2]), 'ether') for _ in self.to_chains]
+        filler_values_list = [Web3.to_wei(round(random.uniform(FILLER_VALUE[0], FILLER_VALUE[1]), random.randint(FILLER_VALUE[2], FILLER_VALUE[3])), 'ether') for _ in self.to_chains]
         return filler_values_list
 
     def get_base_chains():
@@ -128,12 +129,13 @@ class Filler:
             to_chains = random.sample(chains_list, chains_count)
             func = Filler(number, key, from_chain, to_chains)
 
-            if await func.has_balance() and func.is_supported_networks():
-                cost = await func.calculate_cost()
-                cost_native = func.manager.web3.from_wei(cost,'ether')
-                cost_usd =  round(float(cost_native)) * PRICES_NATIVE[from_chain]
-                if cost_usd < FillerSettings.cost_to_chains[1]:
-                   return to_chains
+            if await func.has_balance():
+                if func.is_supported_networks():
+                    cost = await func.calculate_cost()
+                    cost_native = func.manager.web3.from_wei(cost,'ether')
+                    cost_usd =  round(float(cost_native)) * PRICES_NATIVE[from_chain]
+                    if cost_usd < FillerSettings.cost_to_chains[1]:
+                        return to_chains
             else:
                 return False
 
@@ -149,6 +151,5 @@ class Filler:
     def is_supported_networks(self):
             for chain in self.to_chains:
                 if (LAYERZERO_CHAINS_ID[self.from_chain], LAYERZERO_CHAINS_ID[chain]) in EXCLUDED_LZ_PAIRS or (LAYERZERO_CHAINS_ID[chain], LAYERZERO_CHAINS_ID[self.from_chain]) in EXCLUDED_LZ_PAIRS:
-                    logger.error(f'{self.module_str} | this pair of networks is not available for bridge')
                     return False
             return True
