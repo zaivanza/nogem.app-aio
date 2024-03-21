@@ -92,7 +92,7 @@ class FillerSettings:
     '''
 
     # Networks from which you want to perform refill
-    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
+    from_chain = ['optimism', 'arbitrum', 'polygon', 'bsc']  
     # Networks to which you want to perform refuel (will pick up random amount of networks based on to_chains_count)
     to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'viction']
     # Count of destination chains (min and max)
@@ -103,4 +103,19 @@ class FillerSettings:
     # if True, will use random cheap chains with total cost within cost_to_chains range.
     use_random_chains = True 
     # Min and max price in $ for one fill
+    cost_to_chains = [1, 2]
+
+class FillerUltraSettings:
+    '''
+    Ultra gas filler via nogem (use as many chains as possible)
+
+    Chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
+           | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
+    '''
+
+    # Networks from which you want to perform refill
+    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
+
+    # Min and max price in $ for one fill. 
+    # Will find maximum amount of chains to which you can perform fill within cost_to_chains price range.
     cost_to_chains = [1, 2]
