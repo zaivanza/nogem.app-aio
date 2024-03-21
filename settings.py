@@ -48,7 +48,7 @@ class MintBridgeSettings:
         # Preferred source networks due to lower costs; selection is random if list is empty.
         from_chain = ['scroll', 'bsc', 'linea', 'fantom']
         # Preferred destination networks due to lower costs; selection is random if list is empty.
-        to_chain = ['polygon','arbitrum']
+        to_chain = ['conflux','arbitrum']
         # Maximum acceptable cost for the process in dollars ($).
         max_price = 3
         # Range defining the minimum and maximum number of NFTs to be minted and bridged.
@@ -92,12 +92,15 @@ class FillerSettings:
     '''
 
     # Networks from which you want to perform refill
-    from_chain = ['optimism', 'polygon', 'arbitrum', 'fantom', 'bsc']  
+    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
     # Networks to which you want to perform refuel (will pick up random amount of networks based on to_chains_count)
     to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'viction']
     # Count of destination chains (min and max)
-    to_chains_count = [2, 3]
-    # If True, will choose destination chains based on cost (cost_to_chains value), if False will pick up random chains from to_chains
-    is_cheap_to_chains = True  
+    to_chains_count = [1, 2]
+
+    #========================================Use Random Chains=========================================
+    # if False, will pick up random amount of chains (within to_chains_count range) from to_chains list. 
+    # if True, will use random cheap chains with total cost within cost_to_chains range.
+    use_random_chains = True 
     # Min and max price in $ for one fill
-    cost_to_chains = [2, 3]
+    cost_to_chains = [1, 2]

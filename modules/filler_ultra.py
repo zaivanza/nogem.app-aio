@@ -5,7 +5,7 @@ import sys
 from typing import Optional
 from config import FILLER_VALUE, PRICES_NATIVE
 from eth_account import Account
-from settings import RETRY, FillerSettings
+from settings import RETRY, FillerSettings, FillerUltraSettings
 from tools.contracts.abi import ABI_FILLER, ABI_REFUEL
 from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
 from tools.gas_boss import GasBoss
@@ -14,16 +14,14 @@ from eth_abi.packed import encode_packed
 
 from loguru import logger
 
-class Filler:
+class FillerUltra:
     
     def __init__(self, number, key, from_chain, dest_chains):
             self.number = number
             self.key = key
             self.from_chain = from_chain
             self.to_chains = dest_chains
-            self.to_chains_count = FillerSettings.to_chains_count
-            self.use_random_chains = FillerSettings.use_random_chains
-            self.cost_to_chains = FillerSettings.cost_to_chains
+            self.cost_to_chains = FillerUltraSettings.cost_to_chains
             self.manager = GasBoss(self.key, self.from_chain)
             self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(NOGEM_FILLER_CONTRACTS[self.from_chain]), abi=ABI_FILLER)
             self.module_str = f'{self.number} {self.manager.address} | filler : {self.from_chain} => {self.to_chains}'
@@ -138,20 +136,19 @@ class Filler:
     def get_base_chains():
         return FillerSettings.from_chain
     
-    def get_dest_chains():
-        chains_count = random.randint(*FillerSettings.to_chains_count)
-        if chains_count <= len(FillerSettings.to_chains):
-            return random.sample(FillerSettings.to_chains, chains_count)
-        else:
-            logger.error(f"Error during destination chains selection: {chains_count} (to_chains_count) > {len(FillerSettings.to_chains)} (to_chains amount). You can't select more chains than you have in to_chains setting.")
+    async def get_max_chains(number, key, from_chain):
+
+        if not await func.has_balance():
             return False
-    
-    async def get_cheap_chains(number, key, from_chain):
+        
+        chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+        chains_list.remove(from_chain)
+
+
         result_chains = []
         total_usd =0
 
-        chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
-        chains_list.remove(from_chain)
+        
         
         while True:
             to_chain = random.sample(chains_list, 1)
@@ -159,7 +156,7 @@ class Filler:
             
             max_price = random.uniform(*FillerSettings.cost_to_chains)
 
-            func = Filler(number, key, from_chain, to_chain)
+            func = FillerUltra(number, key, from_chain, to_chain)
 
             if await func.has_balance():
                 if func.is_supported_networks():
@@ -177,7 +174,7 @@ class Filler:
                                 result_chains.append(to_chain[0])
                             else:
                                 while True:
-                                    function = Filler(number, key, from_chain, result_chains)
+                                    function = FillerUltra(number, key, from_chain, result_chains)
                                     contract_txn = await function.get_test_txn()
                                     if contract_txn is not False:
                                         return result_chains
@@ -190,7 +187,7 @@ class Filler:
         balance = await self.manager.get_balance_native()
         balance_native = self.manager.web3.from_wei(balance,'ether')
         balance_usd = round(float(balance_native) * PRICES_NATIVE[self.from_chain])
-        if balance_usd < FillerSettings.cost_to_chains[1]:
+        if balance_usd < FillerUltraSettings.cost_to_chains[1]:
             logger.warning("Not enough balance")
             return False
         return True

@@ -82,57 +82,62 @@ class Bridge:
         return await self.contract.functions.minDstGasLookup(dstChainId, funcType).call()
 
     async def get_txn(self):
-            adapterParams = encode_packed(
-                ["uint16", "uint256"],
-                [1, await self.get_min_dst_gas_lookup(LAYERZERO_CHAINS_ID[self.to_chain], 1)] # lzVersion, gasLimit - extra for minting
-            )
+            try:
+                adapterParams = encode_packed(
+                    ["uint16", "uint256"],
+                    [1, await self.get_min_dst_gas_lookup(LAYERZERO_CHAINS_ID[self.to_chain], 1)] # lzVersion, gasLimit - extra for minting
+                )
 
-            nativeFee, _ = await self.estimateSendFee(
-                LAYERZERO_CHAINS_ID[self.to_chain],
-                self.token_id,
-                self.manager.address,
-                False,
-                adapterParams
-            )
+                nativeFee, _ = await self.estimateSendFee(
+                    LAYERZERO_CHAINS_ID[self.to_chain],
+                    self.token_id,
+                    self.manager.address,
+                    False,
+                    adapterParams
+                )
 
-            gas = await self.contract.functions.sendFrom(
-                self.manager.address,
-                LAYERZERO_CHAINS_ID[self.to_chain],
-                self.manager.address,
-                self.token_id,
-                self.manager.address,
-                ZERO_ADDRESS,
-                adapterParams
-            ).estimate_gas(
-                {
-                    "from": self.manager.address,
-                    "value": nativeFee,
-                    "nonce": await self.manager.web3.eth.get_transaction_count(self.manager.address),
-                    'gasPrice': 0,
-                    'gas': 1,
-                }
-            )
-            contract_txn = await self.contract.functions.sendFrom(
-                self.manager.address,
-                LAYERZERO_CHAINS_ID[self.to_chain],
-                self.manager.address,
-                self.token_id,
-                self.manager.address,
-                ZERO_ADDRESS,
-                adapterParams
-            ).build_transaction(
-                {
-                    "from": self.manager.address,
-                    "value": nativeFee,
-                    "nonce": await self.manager.web3.eth.get_transaction_count(self.manager.address),
-                    'gasPrice': 0,
-                    'gas': gas,
-                }
-            )
+                gas = await self.contract.functions.sendFrom(
+                    self.manager.address,
+                    LAYERZERO_CHAINS_ID[self.to_chain],
+                    self.manager.address,
+                    self.token_id,
+                    self.manager.address,
+                    ZERO_ADDRESS,
+                    adapterParams
+                ).estimate_gas(
+                    {
+                        "from": self.manager.address,
+                        "value": nativeFee,
+                        "nonce": await self.manager.web3.eth.get_transaction_count(self.manager.address),
+                        'gasPrice': 0,
+                        'gas': 1,
+                    }
+                )
+                contract_txn = await self.contract.functions.sendFrom(
+                    self.manager.address,
+                    LAYERZERO_CHAINS_ID[self.to_chain],
+                    self.manager.address,
+                    self.token_id,
+                    self.manager.address,
+                    ZERO_ADDRESS,
+                    adapterParams
+                ).build_transaction(
+                    {
+                        "from": self.manager.address,
+                        "value": nativeFee,
+                        "nonce": await self.manager.web3.eth.get_transaction_count(self.manager.address),
+                        'gasPrice': 0,
+                        'gas': gas,
+                    }
+                )
 
-            contract_txn = await self.manager.add_gas_price(contract_txn)
-            contract_txn = await self.manager.add_gas_limit_layerzero(contract_txn)
-            return contract_txn
+                contract_txn = await self.manager.add_gas_price(contract_txn)
+                contract_txn = await self.manager.add_gas_limit_layerzero(contract_txn)
+                return contract_txn
+            
+            except Exception as error:
+                logger.warning(error)
+            return False
     
     async def get_bridge_details(self):
         self.contract = await get_contract(self.from_chain)
