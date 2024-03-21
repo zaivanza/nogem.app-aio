@@ -8,6 +8,7 @@ import questionary
 from questionary import Choice
 
 from config import WALLETS
+from modules.filler_ultra import FillerUltra
 from modules.mint import Mint
 from modules.mint_bridge import MintBridge
 from modules.refuel import Refuel
@@ -23,6 +24,7 @@ def get_module():
             Choice("3) Bridge", Bridge),
             Choice("4) Refuel", Refuel),
             Choice("5) Filler", Filler),
+            #Choice("6) FillerUltra", FillerUltra),
             Choice("6) Exit", "exit"),
         ],
         pointer="💠 "

@@ -1,6 +1,7 @@
 import random
 from modules.bridge import Bridge
 from modules.filler import Filler
+from modules.filler_ultra import FillerUltra
 from modules.mint import Mint
 from modules.mint_bridge import MintBridge
 from modules.refuel import Refuel
@@ -43,7 +44,7 @@ async def get_dest_chain(func):
     if func == Bridge or func == MintBridge or func == Refuel:
         return random.choice(func.get_dest_chains())
     elif func == Filler:
-        if not FillerSettings.is_cheap_to_chains:
+        if not FillerSettings.use_random_chains:
             return func.get_dest_chains()
         else:
             return None
@@ -56,8 +57,12 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
         logger.info(f"{number} Checking balance in {chain}")
         to_chain = dest_chain
 
-        if func == Filler:
+        if func == Filler and FillerSettings.use_random_chains:
             to_chain = await func.get_cheap_chains(number, key, chain)
+
+        # if func == FillerUltra:
+        #     to_chain = await func.get_max_chains(number, key, chain)
+        #     return chain, to_chain
 
         if to_chain is not False:
             function = get_func(func, key, number, chain, to_chain, mint_count)
