@@ -5,7 +5,7 @@ import sys
 from typing import Optional
 from config import FILLER_VALUE, PRICES_NATIVE
 from eth_account import Account
-from settings import RETRY, FillerSettings, FillerUltraSettings
+#from settings import RETRY, FillerSettings, FillerUltraSettings
 from tools.contracts.abi import ABI_FILLER, ABI_REFUEL
 from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
 from tools.gas_boss import GasBoss
