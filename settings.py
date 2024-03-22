@@ -23,7 +23,7 @@ class FillerSettings:
     #========================================Use Random Chains=========================================
     # if False, will pick up random amount of chains (within to_chains_count range) from to_chains list. 
     # if True, will use random cheap chains with total cost within cost_to_chains range.
-    use_random_chains = True 
+    use_random_chains = False 
     # Min and max price in $ for one fill
     cost_to_chains = [1, 2]
 
@@ -37,7 +37,7 @@ class MintSettings:
     # The networks where NFTs will be minted.
     chains = ['scroll','bsc', 'fantom']  
     # The networks where NFTs will be minted.
-    amount_mint = [1, 1]  
+    amount_mint = [1, 2]  
 
 
 class BridgeSettings:

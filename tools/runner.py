@@ -11,17 +11,11 @@ from settings import IS_SLEEP, DELAY_SLEEP, FillerSettings
 from tools.helpers import async_sleeping, is_private_key
 
 from loguru import logger
-import asyncio
-
-async def worker(function):
-    await function.run()
 
 async def process_module(func, wallets):
     number = 0
-    tasks = []
-
-    for key in wallets:
-        try:
+    try:
+        for key in wallets:
             number += 1
             dest_chain = await get_dest_chain(func)
             if is_private_key:
@@ -32,16 +26,14 @@ async def process_module(func, wallets):
                 
                     if base_chain is not None:
                         function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
-                        tasks.append(asyncio.create_task(worker(function)))
+                        await function.run()
             else:
                 logger.error(f"{key} isn't private key")
 
-            await asyncio.gather(*tasks)
-
             if IS_SLEEP and number != len(wallets):
                 await async_sleeping(*DELAY_SLEEP)
-        except Exception as error:
-            logger.error(error)
+    except Exception as error:
+        logger.error(error)
 
 async def get_dest_chain(func):
     if func == Bridge or func == MintBridge or func == Refuel:
