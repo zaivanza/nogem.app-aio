@@ -45,29 +45,32 @@ async def get_dest_chain(func):
             return None
 
 async def find_chain_with_balance(func, key, number, dest_chain, mint_count): 
-    base_chains = func.get_base_chains()
-    random.shuffle(base_chains)
+    try:
+        base_chains = func.get_base_chains()
+        random.shuffle(base_chains)
 
-    for chain in base_chains:
-        logger.info(f"{number} Checking balance in {chain}")
-        to_chain = dest_chain
+        for chain in base_chains:
+            logger.info(f"{number} Checking balance in {chain}")
+            to_chain = dest_chain
 
-        if func == Filler and FillerSettings.use_random_chains:
-            to_chain = await func.get_cheap_chains(number, key, chain)
+            if func == Filler and FillerSettings.use_random_chains:
+                to_chain = await func.get_cheap_chains(number, key, chain)
 
-        # if func == FillerUltra:
-        #     to_chain = await func.get_max_chains(number, key, chain)
-        #     return chain, to_chain
+            # if func == FillerUltra:
+            #     to_chain = await func.get_max_chains(number, key, chain)
+            #     return chain, to_chain
 
-        if to_chain is not False:
-            function = get_func(func, key, number, chain, to_chain, mint_count)
-            total_cost = await function.calculate_cost()
-            if total_cost is not False:
-                balance = await function.manager.get_balance_native()
-                if balance >= total_cost:
-                    return chain, to_chain
-    logger.error(f'Execution is failed in all base chains {base_chains}. Please, check warnings from logs above to identify the issue.')               
-    return None, dest_chain
+            if to_chain is not False:
+                function = get_func(func, key, number, chain, to_chain, mint_count)
+                total_cost = await function.calculate_cost()
+                if total_cost is not False:
+                    balance = await function.manager.get_balance_native()
+                    if balance >= total_cost:
+                        return chain, to_chain
+        logger.error(f'Execution is failed in all base chains {base_chains}. Please, check warnings from logs above to identify the issue.')               
+        return None, dest_chain
+    except Exception as error:
+        logger.error(error)
 
 def get_func(func, key, number, base_chain, dest_chain, mint_count=0):
     function_instance = func(number, key, base_chain, dest_chain) if func != Mint else func(number, key, base_chain, mint_count)
