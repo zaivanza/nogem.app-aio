@@ -147,34 +147,36 @@ class Filler:
             return False
     
     async def get_cheap_chains(number, key, from_chain):
-        result_chains = []
-        total_usd =0
+        try:
+            result_chains = []
+            total_usd =0
 
-        chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
-        chains_list.remove(from_chain)
-        
-        while True:
-            to_chain = random.sample(chains_list, 1)
-            chains_list.remove(to_chain[0])
+            chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+            chains_list.remove(from_chain)
+            random.shuffle(chains_list)
             
-            max_price = random.uniform(*FillerSettings.cost_to_chains)
-
-            func = Filler(number, key, from_chain, to_chain)
-
-            if await func.has_balance():
+            for to_chain in chains_list:
+                max_price = random.uniform(*FillerSettings.cost_to_chains)
+                to_chains = []
+                to_chains.append(to_chain)
+            
+                func = Filler(number, key, from_chain, to_chains)
+                if not await func.has_balance():
+                    return False
+            
                 if func.is_supported_networks():
                     contract_txn = await func.get_test_txn()
                     if contract_txn is not False:
                         cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
                         if cost != 0: 
                             cost_native = func.manager.web3.from_wei(cost,'ether')
-                            cost_usd = round(float(cost_native)) * PRICES_NATIVE[from_chain]
+                            cost_usd = float(cost_native) * PRICES_NATIVE[from_chain]
                             if total_usd + cost_usd <= FillerSettings.cost_to_chains[0]: 
                                 total_usd += cost_usd
-                                result_chains.append(to_chain[0])
+                                result_chains.append(to_chain)
                             elif total_usd + cost_usd <= max_price:
                                 total_usd += cost_usd
-                                result_chains.append(to_chain[0])
+                                result_chains.append(to_chain)
                             else:
                                 while True:
                                     function = Filler(number, key, from_chain, result_chains)
@@ -183,8 +185,8 @@ class Filler:
                                         return result_chains
                                     else:
                                         result_chains.pop()
-            else:
-                return False
+        except Exception as error:
+            logger.error(error)
 
     async def has_balance(self):
         balance = await self.manager.get_balance_native()

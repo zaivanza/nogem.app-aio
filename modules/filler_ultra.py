@@ -5,7 +5,7 @@ import sys
 from typing import Optional
 from config import FILLER_VALUE, PRICES_NATIVE
 from eth_account import Account
-from settings import RETRY, FillerSettings, FillerUltraSettings
+#from settings import RETRY, FillerSettings, FillerUltraSettings
 from tools.contracts.abi import ABI_FILLER, ABI_REFUEL
 from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
 from tools.gas_boss import GasBoss
@@ -165,7 +165,7 @@ class FillerUltra:
                         cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
                         if cost != 0: 
                             cost_native = func.manager.web3.from_wei(cost,'ether')
-                            cost_usd = round(float(cost_native)) * PRICES_NATIVE[from_chain]
+                            cost_usd = round(float(cost_native) * PRICES_NATIVE[from_chain])
                             if total_usd + cost_usd <= FillerSettings.cost_to_chains[0]: 
                                 total_usd += cost_usd
                                 result_chains.append(to_chain[0])

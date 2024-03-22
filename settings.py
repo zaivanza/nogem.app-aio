@@ -5,6 +5,27 @@ SHUFFLE_WALLETS = True  # Enable/disable random wallet shuffling
 RETRY = 0               # Number of retries on errors/failures
 MAX_WAITING_NFT = 200   # Maximum duration (in seconds) to await the arrival of the NFT in the destination network before timing out.
 
+class FillerSettings:
+    '''
+    Gas filler via nogem
+
+    Chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
+           | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
+    '''
+
+    # Networks from which you want to perform refill
+    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
+    # Networks to which you want to perform refuel (will pick up random amount of networks based on to_chains_count)
+    to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'viction']
+    # Count of destination chains (min and max)
+    to_chains_count = [1, 2]
+
+    #========================================Use Random Chains=========================================
+    # if False, will pick up random amount of chains (within to_chains_count range) from to_chains list. 
+    # if True, will use random cheap chains with total cost within cost_to_chains range.
+    use_random_chains = False 
+    # Min and max price in $ for one fill
+    cost_to_chains = [1, 2]
 
 class MintSettings:
     '''
@@ -16,7 +37,7 @@ class MintSettings:
     # The networks where NFTs will be minted.
     chains = ['scroll','bsc', 'fantom']  
     # The networks where NFTs will be minted.
-    amount_mint = [1, 1]  
+    amount_mint = [1, 2]  
 
 
 class BridgeSettings:

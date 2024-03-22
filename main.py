@@ -19,11 +19,11 @@ def get_module():
     result = questionary.select(
         "Choose a module (more coming soon!) :",
         choices=[
-            Choice("1) Mint + Bridge", MintBridge),
-            Choice("2) Mint", Mint),
-            Choice("3) Bridge", Bridge),
-            Choice("4) Refuel", Refuel),
-            Choice("5) Filler", Filler),
+            Choice("1) Filler", Filler),
+            Choice("2) Mint + Bridge", MintBridge),
+            Choice("3) Mint", Mint),
+            Choice("4) Bridge", Bridge),
+            Choice("5) Refuel", Refuel),
             #Choice("6) FillerUltra", FillerUltra),
             Choice("6) Exit", "exit"),
         ],
