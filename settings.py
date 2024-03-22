@@ -13,18 +13,18 @@ class FillerSettings:
            | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
     '''
 
-    # Networks from which you want to perform refill
+    # Networks from which you want to perform refill.
     from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
-    # Networks to which you want to perform refuel (will pick up random amount of networks based on to_chains_count)
+    # Networks to which you want to perform refuel (will pick up random amount of networks based on 'to_chains_count').
     to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'viction']
-    # Count of destination chains (min and max)
+    # Count of destination chains (min and max).
     to_chains_count = [1, 2]
 
-    #========================================Use Random Chains=========================================
-    # if False, will pick up random amount of chains (within to_chains_count range) from to_chains list. 
-    # if True, will use random cheap chains with total cost within cost_to_chains range.
+    #========================================Use Random Chains===========================================
+    # if False, will pick up random amount of chains (within 'to_chains_count' range) from 'to_chain' list. 
+    # if True, will use random cheap chains with total cost within 'cost_to_chains' range.
     use_random_chains = False 
-    # Min and max price in $ for one fill
+    # Min and max price in $ for one fill.
     cost_to_chains = [1, 2]
 
 class MintSettings:
@@ -55,7 +55,7 @@ class BridgeSettings:
         to_chain = ['polygon']
         # The number of NFTs to bridge.
         amount = 1  
-        # If True, all available NFTs will be bridged if they exceed the specified 'amount'.
+        # If True, all available NFTs will be bridged, even if they exceed the specified 'amount' value.
         bridge_all = False
 
 class MintBridgeSettings:
@@ -66,11 +66,11 @@ class MintBridgeSettings:
                | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
         '''
 
-        # Preferred source networks due to lower costs; selection is random if list is empty.
+        # Preferred source networks, will randomly pick up network with money for mint+bridge.
         from_chain = ['scroll', 'bsc', 'linea', 'fantom']
-        # Preferred destination networks due to lower costs; selection is random if list is empty.
+        # Preferred destination networks, will randomly pick up one destination network.
         to_chain = ['conflux','arbitrum']
-        # Maximum acceptable cost for the process in dollars ($).
+        # Maximum acceptable cost for the mint+bridge in dollars ($).
         max_price = 3
         # Range defining the minimum and maximum number of NFTs to be minted and bridged.
         amount = [1, 2]
@@ -84,22 +84,21 @@ class RefuelSettings:
             | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen | xpla | rari
     '''
 
-    # Networks from which you want to perform refuel (>= 1 network)
+    # Networks from which you want to perform refuel.
     from_chain = ['fantom']
-    # Networks to which you want to perform refuel (>= 1 network)
+    # Networks to which you want to perform refuel.
     to_chain = ['avalanche']
 
-    # Obtain from a certain amount of native token of the to_chain network
+    # Obtain from a certain amount of native token of the to_chain network.
     amount_from = 0.0000001
-    # Obtain up to a certain amount of native token of the to_chain network
+    # Obtain up to a certain amount of native token of the to_chain network.
     amount_to = 0.000002
 
-    swap_all_balance = False  # True / False. If True, then refuel the entire balance
-    min_amount_swap = 0  # If the balance is less than this amount, no refuel will be made
-    # How many coins to keep on the wallet (only works when: swap_all_balance = True)
+    # True / False. If True, then refuel the entire balance.
+    swap_all_balance = False
+    # If the balance is less than this amount, no refuel will be made.
+    min_amount_swap = 0  
+    # How many coins to keep on the wallet (only works when: swap_all_balance = True).
     keep_value_from = 0
-    # Up to how many coins to keep on the wallet (only works when: swap_all_balance = True)
+    # Up to how many coins to keep on the wallet (only works when: swap_all_balance = True).
     keep_value_to = 0
-
-    # True if you want to check the gas. False if you want to perform refuel
-    get_layerzero_fee = False
