@@ -21,24 +21,27 @@ async def process_module(func, wallets):
     tasks = []
 
     for key in wallets:
-        number += 1
-        dest_chain = await get_dest_chain(func)
-        if is_private_key:
-            if dest_chain is not False:
-                wallet_number =  f'[{number}/{len(wallets)}]'
-                mint_count = random.randint(*MintSettings.amount_mint)
-                base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
-            
-                if base_chain is not None:
-                    function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
-                    tasks.append(asyncio.create_task(worker(function)))
-        else:
-            logger.error(f"{key} isn't private key")
+        try:
+            number += 1
+            dest_chain = await get_dest_chain(func)
+            if is_private_key:
+                if dest_chain is not False:
+                    wallet_number =  f'[{number}/{len(wallets)}]'
+                    mint_count = random.randint(*MintSettings.amount_mint)
+                    base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
+                
+                    if base_chain is not None:
+                        function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
+                        tasks.append(asyncio.create_task(worker(function)))
+            else:
+                logger.error(f"{key} isn't private key")
 
-        await asyncio.gather(*tasks)
+            await asyncio.gather(*tasks)
 
-        if IS_SLEEP and number != len(wallets):
-            await async_sleeping(*DELAY_SLEEP)
+            if IS_SLEEP and number != len(wallets):
+                await async_sleeping(*DELAY_SLEEP)
+        except Exception as error:
+            logger.error(error)
 
 async def get_dest_chain(func):
     if func == Bridge or func == MintBridge or func == Refuel:
