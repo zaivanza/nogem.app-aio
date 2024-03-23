@@ -18,7 +18,7 @@ class FillerSettings:
     # Networks to which you want to perform refuel (will pick up random amount of networks based on 'to_chains_count').
     to_chains = ['gnosis', 'fuse', 'klaytn', 'opbnb', 'telos', 'orderly', 'rari', 'astar', 'aurora']
     # Count of destination chains (min and max).
-    to_chains_count = [4, 12]
+    to_chains_count = [4, 9]
 
     #========================================Use Random Chains===========================================
     # if False, will pick up random amount of chains (within 'to_chains_count' range) from 'to_chain' list. 
