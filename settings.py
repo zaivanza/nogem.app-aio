@@ -14,16 +14,16 @@ class FillerSettings:
     '''
 
     # Networks from which you want to perform refill.
-    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc', 'polygon', 'base']  
+    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc', 'polygon']  
     # Networks to which you want to perform refuel (will pick up random amount of networks based on 'to_chains_count').
-    to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'telos', 'orderly', 'rari', 'astar', 'aurora', 'metis', 'metis']
+    to_chains = ['gnosis', 'fuse', 'klaytn', 'opbnb', 'telos', 'orderly', 'rari', 'astar', 'aurora']
     # Count of destination chains (min and max).
     to_chains_count = [4, 12]
 
     #========================================Use Random Chains===========================================
     # if False, will pick up random amount of chains (within 'to_chains_count' range) from 'to_chain' list. 
     # if True, will use random cheap chains with total cost within 'cost_to_chains' range.
-    use_random_chains = False 
+    use_random_chains = True 
     # Min and max price in $ for one fill.
     cost_to_chains = [1, 2]
 
