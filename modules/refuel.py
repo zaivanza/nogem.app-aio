@@ -131,3 +131,8 @@ class Refuel:
     
     def get_dest_chains():
         return RefuelSettings.to_chain 
+    
+    def print_chains():
+        chains_list = list(NOGEM_REFUEL_CONTRACTS.keys())
+        for chain in chains_list:
+            print(chain, end=" | ")
