@@ -8,7 +8,7 @@ import questionary
 from questionary import Choice
 
 from config import WALLETS
-from modules.filler_ultra import FillerUltra
+from modules.auto_filler import AutoFiller
 from modules.mint import Mint
 from modules.mint_bridge import MintBridge
 from modules.refuel import Refuel
@@ -19,13 +19,13 @@ def get_module():
     result = questionary.select(
         "Choose a module (more coming soon!) :",
         choices=[
-            Choice("1) Filler", Filler),
-            Choice("2) Mint + Bridge", MintBridge),
-            Choice("3) Mint", Mint),
-            Choice("4) Bridge", Bridge),
-            Choice("5) Refuel", Refuel),
-            #Choice("6) FillerUltra", FillerUltra),
-            Choice("6) Exit", "exit"),
+            Choice("1) Auto Filler", AutoFiller),
+            Choice("2) Filler", Filler),
+            Choice("3) Mint + Bridge", MintBridge),
+            Choice("4) Mint", Mint),
+            Choice("5) Bridge", Bridge),
+            Choice("6) Refuel", Refuel),
+            Choice("7) Exit", "exit"),
         ],
         pointer="💠 "
     ).ask()

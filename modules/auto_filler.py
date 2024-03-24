@@ -1,11 +1,7 @@
 import asyncio
-import decimal
 import random
-import sys
-from typing import Optional
 from config import FILLER_VALUE, PRICES_NATIVE
-from eth_account import Account
-#from settings import RETRY, FillerSettings, FillerUltraSettings
+from settings import RETRY, AutoFillerSettings
 from tools.contracts.abi import ABI_FILLER, ABI_REFUEL
 from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
 from tools.gas_boss import GasBoss
@@ -14,14 +10,14 @@ from eth_abi.packed import encode_packed
 
 from loguru import logger
 
-class FillerUltra:
+class AutoFiller:
     
     def __init__(self, number, key, from_chain, dest_chains):
             self.number = number
             self.key = key
             self.from_chain = from_chain
             self.to_chains = dest_chains
-            self.cost_to_chains = FillerUltraSettings.cost_to_chains
+            self.cost_to_chains = AutoFillerSettings.cost_to_chains
             self.manager = GasBoss(self.key, self.from_chain)
             self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(NOGEM_FILLER_CONTRACTS[self.from_chain]), abi=ABI_FILLER)
             self.module_str = f'{self.number} {self.manager.address} | filler : {self.from_chain} => {self.to_chains}'
@@ -37,7 +33,7 @@ class FillerUltra:
         if not contract_txn:
             logger.error(f'{self.module_str} | error getting contract_txn')
             return False
-
+        
         status, tx_link = await self.manager.send_tx(contract_txn)
 
         if status == 1:
@@ -101,10 +97,10 @@ class FillerUltra:
             contract_txn = await self.manager.add_gas_price(contract_txn)
             contract_txn = await self.manager.add_gas_limit_layerzero(contract_txn)
 
-            return contract_txn
+            return contract_txn, True
         
         except Exception as error:
-            return False
+            return error, False
 
     def get_filler_data(self, to_chains_ids, filler_values_list):
         data = []
@@ -134,60 +130,55 @@ class FillerUltra:
         return filler_values_list
 
     def get_base_chains():
-        return FillerSettings.from_chain
+        return AutoFillerSettings.from_chain
     
     async def get_max_chains(number, key, from_chain):
+        try: 
+            chains_dict = {}      
+            result_chains = []
+            total_cost = 0
 
-        if not await func.has_balance():
-            return False
-        
-        chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
-        chains_list.remove(from_chain)
-
-
-        result_chains = []
-        total_usd =0
-
-        
-        
-        while True:
-            to_chain = random.sample(chains_list, 1)
-            chains_list.remove(to_chain[0])
+            chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+            chains_list.remove(from_chain)
             
-            max_price = random.uniform(*FillerSettings.cost_to_chains)
+            for chain in chains_list:
+                to_chains = []
+                to_chains.append(chain)
 
-            func = FillerUltra(number, key, from_chain, to_chain)
-
-            if await func.has_balance():
+                func = AutoFiller(number, key, from_chain, to_chains)
+                
                 if func.is_supported_networks():
-                    contract_txn = await func.get_test_txn()
-                    if contract_txn is not False:
-                        cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
-                        if cost != 0: 
-                            cost_native = func.manager.web3.from_wei(cost,'ether')
-                            cost_usd = round(float(cost_native) * PRICES_NATIVE[from_chain])
-                            if total_usd + cost_usd <= FillerSettings.cost_to_chains[0]: 
-                                total_usd += cost_usd
-                                result_chains.append(to_chain[0])
-                            elif total_usd + cost_usd <= max_price:
-                                total_usd += cost_usd
-                                result_chains.append(to_chain[0])
-                            else:
-                                while True:
-                                    function = FillerUltra(number, key, from_chain, result_chains)
-                                    contract_txn = await function.get_test_txn()
-                                    if contract_txn is not False:
-                                        return result_chains
-                                    else:
-                                        result_chains.pop()
-            else:
-                return False
+                    contract_txn, txn_is_ok = await func.get_test_txn()
+
+                if txn_is_ok:
+                    cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
+                    if cost != 0:
+                        cost_native = func.manager.web3.from_wei(cost,'ether')
+                        cost_usd = float(cost_native) * PRICES_NATIVE[from_chain]
+                        chains_dict.update({chain:cost_usd})
+            
+            chains_dict = dict(sorted(chains_dict.items(), key=lambda x:x[1]))
+            
+            for i in chains_dict:
+                if total_cost + chains_dict[i] < AutoFillerSettings.cost_to_chains[1]:
+                    to_chains = []
+                    to_chains.append(i)
+                    func = AutoFiller(number, key, from_chain, to_chains)
+                    if func.is_supported_networks():
+                        result_chains.append(i)
+                        total_cost += chains_dict[i]
+                else:
+                    return result_chains
+                            
+        except Exception as error:
+            logger.warning(error)
+            return False
 
     async def has_balance(self):
         balance = await self.manager.get_balance_native()
         balance_native = self.manager.web3.from_wei(balance,'ether')
         balance_usd = round(float(balance_native) * PRICES_NATIVE[self.from_chain])
-        if balance_usd < FillerUltraSettings.cost_to_chains[1]:
+        if balance_usd < AutoFillerSettings.cost_to_chains[1]:
             logger.warning("Not enough balance")
             return False
         return True
