@@ -14,26 +14,27 @@ from loguru import logger
 
 async def process_module(func, wallets):
     number = 0
-    try:
-        for key in wallets:
-            number += 1
-            dest_chain = await get_dest_chain(func)
-            if is_private_key:
-                if dest_chain is not False:
-                    wallet_number =  f'[{number}/{len(wallets)}]'
-                    mint_count = random.randint(*MintSettings.amount_mint)
-                    base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
-                
-                    if base_chain is not None:
-                        function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
-                        await function.run()
-            else:
-                logger.error(f"{key} isn't private key")
+    for key in wallets:
+            try:
+                number += 1
+                dest_chain = await get_dest_chain(func)
+                if is_private_key:
+                    if dest_chain is not False:
+                        wallet_number =  f'[{number}/{len(wallets)}]'
+                        mint_count = random.randint(*MintSettings.amount_mint)
+                        base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
 
-            if IS_SLEEP and number != len(wallets):
-                await async_sleeping(*DELAY_SLEEP)
-    except Exception as error:
-        logger.error(error)
+                        if base_chain is not None:
+                            function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
+                            await function.run()
+                else:
+                    logger.error(f"{key} isn't private key")
+
+                if IS_SLEEP and number != len(wallets):
+                    await async_sleeping(*DELAY_SLEEP)
+
+            except Exception as error:
+                logger.error(error)
 
 async def get_dest_chain(func):
     if func == Bridge or func == MintBridge or func == Refuel:
