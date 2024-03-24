@@ -1,12 +1,8 @@
 import asyncio
-import decimal
 import random
-import sys
-from typing import Optional
 from config import FILLER_VALUE, PRICES_NATIVE
-from eth_account import Account
 from settings import RETRY, FillerSettings
-from tools.contracts.abi import ABI_FILLER, ABI_REFUEL
+from tools.contracts.abi import ABI_FILLER
 from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
 from tools.gas_boss import GasBoss
 from web3 import Web3
@@ -103,10 +99,10 @@ class Filler:
             contract_txn = await self.manager.add_gas_price(contract_txn)
             contract_txn = await self.manager.add_gas_limit_layerzero(contract_txn)
 
-            return contract_txn
+            return contract_txn, True
         
         except Exception as error:
-            return False
+            return error, False
 
     def get_filler_data(self, to_chains_ids, filler_values_list):
         data = []
@@ -147,46 +143,50 @@ class Filler:
             return False
     
     async def get_cheap_chains(number, key, from_chain):
-        try:
+        try:       
             result_chains = []
-            total_usd =0
+            total_cost = 0
 
             chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
             chains_list.remove(from_chain)
-            random.shuffle(chains_list)
             
-            for to_chain in chains_list:
-                max_price = random.uniform(*FillerSettings.cost_to_chains)
-                to_chains = []
-                to_chains.append(to_chain)
-            
+            while len(chains_list) != 1:
+                if result_chains == []:
+                    to_chains = random.sample(chains_list, FillerSettings.min_chains_count)
+                else:
+                    to_chains = random.sample(chains_list, 1)
+                    chains_list.remove(to_chains[0])
+
+                chains_list = list(set(chains_list) - set(to_chains))
+                to_chains.extend(result_chains)
+
                 func = Filler(number, key, from_chain, to_chains)
                 if not await func.has_balance():
                     return False
-            
+                
                 if func.is_supported_networks():
-                    contract_txn = await func.get_test_txn()
-                    if contract_txn is not False:
+                    contract_txn, txn_is_ok = await func.get_test_txn()
+                    
+                    if txn_is_ok:
                         cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
-                        if cost != 0: 
+                        if cost != 0:
                             cost_native = func.manager.web3.from_wei(cost,'ether')
                             cost_usd = float(cost_native) * PRICES_NATIVE[from_chain]
-                            if total_usd + cost_usd <= FillerSettings.cost_to_chains[0]: 
-                                total_usd += cost_usd
-                                result_chains.append(to_chain)
-                            elif total_usd + cost_usd <= max_price:
-                                total_usd += cost_usd
-                                result_chains.append(to_chain)
-                            else:
-                                while True:
-                                    function = Filler(number, key, from_chain, result_chains)
-                                    contract_txn = await function.get_test_txn()
-                                    if contract_txn is not False:
-                                        return result_chains
-                                    else:
-                                        result_chains.pop()
+
+                            if  cost_usd < FillerSettings.cost_to_chains[1]:
+                                result_chains = to_chains
+                                total_cost = cost_usd
+                            elif result_chains != []:
+                                return result_chains
+                    if 'insufficient' in str(contract_txn) and result_chains != [] and (FillerSettings.cost_to_chains[0] < total_cost < FillerSettings.cost_to_chains[1]):
+                        return result_chains
+
+            logger.warning('Cannot find random cheap chains. Please, decrease min_chains_count or adjust cost_to_chains value.')
+            return False
+                            
         except Exception as error:
-            logger.error(error)
+            logger.warning(error)
+            return False
 
     async def has_balance(self):
         balance = await self.manager.get_balance_native()

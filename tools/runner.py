@@ -1,7 +1,7 @@
 import random
 from modules.bridge import Bridge
 from modules.filler import Filler
-from modules.filler_ultra import FillerUltra
+from modules.auto_filler import AutoFiller
 from modules.mint import Mint
 from modules.mint_bridge import MintBridge
 from modules.refuel import Refuel
@@ -13,28 +13,32 @@ from tools.helpers import async_sleeping, is_private_key
 from loguru import logger
 
 async def process_module(func, wallets):
-    number = 0
-    for key in wallets:
-            try:
-                number += 1
-                dest_chain = await get_dest_chain(func)
-                if is_private_key:
-                    if dest_chain is not False:
-                        wallet_number =  f'[{number}/{len(wallets)}]'
-                        mint_count = random.randint(*MintSettings.amount_mint)
-                        base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
+    if func == None:
+        logger.info('Stopping application.')
+    else:
+        number = 0
+        for key in wallets:
+                try:
+                    number += 1
+                    dest_chain = await get_dest_chain(func)
+                    if is_private_key:
+                        if dest_chain is not False:
+                            wallet_number =  f'[{number}/{len(wallets)}]'
+                            mint_count = random.randint(*MintSettings.amount_mint)
 
-                        if base_chain is not None:
-                            function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
-                            await function.run()
-                else:
-                    logger.error(f"{key} isn't private key")
+                            base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
 
-                if IS_SLEEP and number != len(wallets):
-                    await async_sleeping(*DELAY_SLEEP)
+                            if base_chain is not None:
+                                function = get_func(func, key, wallet_number, base_chain, dest_chain, mint_count)
+                                await function.run()
+                    else:
+                        logger.error(f"{key} isn't private key")
 
-            except Exception as error:
-                logger.error(error)
+                    if IS_SLEEP and number != len(wallets):
+                        await async_sleeping(*DELAY_SLEEP)
+
+                except Exception as error:
+                    logger.error(error)
 
 async def get_dest_chain(func):
     if func == Bridge or func == MintBridge or func == Refuel:
@@ -57,9 +61,8 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
             if func == Filler and FillerSettings.use_random_chains:
                 to_chain = await func.get_cheap_chains(number, key, chain)
 
-            # if func == FillerUltra:
-            #     to_chain = await func.get_max_chains(number, key, chain)
-            #     return chain, to_chain
+            if func == AutoFiller:
+                to_chain = await func.get_max_chains(number, key, chain)
 
             if to_chain is not False:
                 function = get_func(func, key, number, chain, to_chain, mint_count)

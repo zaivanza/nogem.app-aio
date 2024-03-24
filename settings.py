@@ -5,6 +5,19 @@ SHUFFLE_WALLETS = True  # Enable/disable random wallet shuffling
 RETRY = 0               # Number of retries on errors/failures
 MAX_WAITING_NFT = 200   # Maximum duration (in seconds) to await the arrival of the NFT in the destination network before timing out.
 
+class AutoFillerSettings:
+    '''
+    Gas auto filler via nogem
+
+    Chains : arbitrum | polygon | bsc | optimism | fantom | core | nova | mantle | avalanche | base | linea | scroll | zora | astar | aurora | celo 
+           | conflux | fuse | gnosis | kava | klaytn | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
+    '''
+
+    # Networks from which you want to perform refill. Will choose one network with balance.
+    from_chain =  ['optimism', 'arbitrum', 'fantom', 'bsc', 'polygon'] 
+    # Min and max price in $ for one fill. Will pick up maximum amount of networks for your price range mentioned in 'cost_to_chains'.
+    cost_to_chains = [1, 2]
+
 class FillerSettings:
     '''
     Gas filler via nogem
@@ -23,7 +36,9 @@ class FillerSettings:
     #========================================Use Random Chains===========================================
     # if False, will pick up random amount of chains (within 'to_chains_count' range) from 'to_chain' list. 
     # if True, will use random cheap chains with total cost within 'cost_to_chains' range.
-    use_random_chains = False 
+    use_random_chains = True  
+    # Min amount of destination chains for random mode (when 'use_random_chains = True')
+    min_chains_count = 3
     # Min and max price in $ for one fill.
     cost_to_chains = [1, 2]
 
@@ -35,9 +50,9 @@ class MintSettings:
            | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
     '''
     # The networks where NFTs will be minted.
-    chains = ['zksync']  
+    chains = ['fantom']  
     # The networks where NFTs will be minted.
-    amount_mint = [1, 3]  
+    amount_mint = [1, 1]  
 
 class BridgeSettings:
         '''
