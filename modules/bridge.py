@@ -1,7 +1,7 @@
 
 import asyncio
 from modules.mint import get_contract
-from tools.contracts.contract import ZERO_ADDRESS,LAYERZERO_CHAINS_ID, EXCLUDED_LZ_PAIRS
+from tools.contracts.contract import NOGEM_CONTRACTS, ZERO_ADDRESS,LAYERZERO_CHAINS_ID, EXCLUDED_LZ_PAIRS
 from settings import BridgeSettings
 from settings import DELAY_SLEEP, RETRY
 from tools.gas_boss import GasBoss
@@ -172,3 +172,22 @@ class Bridge:
         
         return total_cost
 
+    async def check_chains(number, key, from_chain):
+            chains_list = list(NOGEM_CONTRACTS.keys())
+            chains_list.remove(from_chain)
+
+            print(f'base chain: {from_chain}')
+            for chain in chains_list:
+                func = Bridge(number, key, from_chain, chain)
+                
+                contract_txn = await func.get_txn()
+
+                if contract_txn is not False:
+                    print('+', chain)
+                else:
+                    print('-', chain)
+
+    def print_chains():
+        chains_list = list(NOGEM_CONTRACTS.keys())
+        for chain in chains_list:
+            print(chain, end=" | ")

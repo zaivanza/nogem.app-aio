@@ -202,3 +202,28 @@ class Filler:
                 if (LAYERZERO_CHAINS_ID[self.from_chain], LAYERZERO_CHAINS_ID[chain]) in EXCLUDED_LZ_PAIRS or (LAYERZERO_CHAINS_ID[chain], LAYERZERO_CHAINS_ID[self.from_chain]) in EXCLUDED_LZ_PAIRS:
                     return False
             return True
+    
+    async def check_chains(number, key, from_chain):
+            chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+            chains_list.remove(from_chain)
+
+            print(f'base chain: {from_chain}')
+            for chain in chains_list:
+                to_chains = []
+                to_chains.append(chain)
+                func = Filler(number, key, from_chain, to_chains)
+
+                if not await func.has_balance():
+                    return False
+                
+                contract_txn = await func.get_txn()
+
+                if contract_txn is not False:
+                    print('+', chain)
+                else:
+                    print('-', chain)
+
+    def print_chains():
+        chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+        for chain in chains_list:
+            print(chain, end=" | ")

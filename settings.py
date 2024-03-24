@@ -9,68 +9,67 @@ class FillerSettings:
     '''
     Gas filler via nogem
 
-    Chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
-           | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
+    Chains : arbitrum | polygon | bsc | optimism | fantom | core | nova | mantle | avalanche | base | linea | scroll | zora | astar | aurora | celo 
+           | conflux | fuse | gnosis | kava | klaytn | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
     '''
 
-    # Networks from which you want to perform refill
-    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
-    # Networks to which you want to perform refuel (will pick up random amount of networks based on to_chains_count)
-    to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'viction']
-    # Count of destination chains (min and max)
-    to_chains_count = [1, 2]
+    # Networks from which you want to perform refill.
+    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc', 'polygon']  
+    # Networks to which you want to perform refuel (will pick up random amount of networks based on 'to_chains_count').
+    to_chains = ['gnosis', 'fuse', 'klaytn', 'opbnb', 'telos', 'orderly', 'rari', 'astar', 'aurora']
+    # Count of destination chains (min and max).
+    to_chains_count = [4, 9]
 
-    #========================================Use Random Chains=========================================
-    # if False, will pick up random amount of chains (within to_chains_count range) from to_chains list. 
-    # if True, will use random cheap chains with total cost within cost_to_chains range.
+    #========================================Use Random Chains===========================================
+    # if False, will pick up random amount of chains (within 'to_chains_count' range) from 'to_chain' list. 
+    # if True, will use random cheap chains with total cost within 'cost_to_chains' range.
     use_random_chains = False 
-    # Min and max price in $ for one fill
+    # Min and max price in $ for one fill.
     cost_to_chains = [1, 2]
 
 class MintSettings:
     '''
     Minting operation
 
-    Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn
-           | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
+    Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb 
+           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
     '''
     # The networks where NFTs will be minted.
-    chains = ['scroll','bsc', 'fantom']  
+    chains = ['zksync']  
     # The networks where NFTs will be minted.
-    amount_mint = [1, 2]  
-
+    amount_mint = [1, 3]  
 
 class BridgeSettings:
         '''
         Bridging operation
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
 
-        Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn
-               | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
+        Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
         '''
 
         # The source network where NFTs will be searched; the final choice is random.
-        from_chain = ['fantom']
+        from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc', 'polygon']
         # Potential destination networks; the final choice is random.
-        to_chain = ['polygon']
+        to_chain = ['metis', 'core', 'fuse', 'gnosis', 'tenet']
         # The number of NFTs to bridge.
         amount = 1  
-        # If True, all available NFTs will be bridged if they exceed the specified 'amount'.
+        # If True, all available NFTs will be bridged, even if they exceed the specified 'amount' value.
         bridge_all = False
 
 class MintBridgeSettings:
         '''
         Combination of minting and bridging operations
 
-        Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn
-               | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen
+        Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
         '''
 
-        # Preferred source networks due to lower costs; selection is random if list is empty.
-        from_chain = ['scroll', 'bsc', 'linea', 'fantom']
-        # Preferred destination networks due to lower costs; selection is random if list is empty.
-        to_chain = ['conflux','arbitrum']
-        # Maximum acceptable cost for the process in dollars ($).
+        # Preferred source networks, will randomly pick up network with money for mint+bridge.
+        from_chain = ['zksync', 'linea', 'scroll']
+        # Preferred destination networks, will randomly pick up one destination network.
+        to_chain = ['optimism', 'nova', 'celo', 'core']
+        # Maximum acceptable cost for the mint+bridge in dollars ($).
         max_price = 3
         # Range defining the minimum and maximum number of NFTs to be minted and bridged.
         amount = [1, 2]
@@ -80,63 +79,25 @@ class RefuelSettings:
     '''
     Gas refuel via nogem
 
-     Chains : arbitrum | optimism | bsc | polygon | base | avalanche | beam | scroll | opbnb | kava | fuse | klaytn | manta | loot | orderly
-            | linea | nova | zora | gnosis | fantom | core | celo | okx | tenet | mantle | conflux | metis | horizen | xpla | rari
+     Chains : arbitrum | nova | bsc | avalanche | polygon | fantom | celo | fuse | gnosis | klaytn | core | tenet | kava | mantle 
+            | beam | telos | opbnb | aurora | conflux | scroll | horizen | manta | xpla | okx | rari | zora | optimism | loot | orderly | 
     '''
 
-    # Networks from which you want to perform refuel (>= 1 network)
-    from_chain = ['fantom']
-    # Networks to which you want to perform refuel (>= 1 network)
-    to_chain = ['avalanche']
+    # Networks from which you want to perform refuel.
+    from_chain = ['fantom', 'polygon']
+    # Networks to which you want to perform refuel.
+    to_chain = ['avalanche', 'rari', 'tenet', 'opbnb', 'manta']
 
-    # Obtain from a certain amount of native token of the to_chain network
+    # Obtain from a certain amount of native token of the to_chain network.
     amount_from = 0.0000001
-    # Obtain up to a certain amount of native token of the to_chain network
+    # Obtain up to a certain amount of native token of the to_chain network.
     amount_to = 0.000002
 
-    swap_all_balance = False  # True / False. If True, then refuel the entire balance
-    min_amount_swap = 0  # If the balance is less than this amount, no refuel will be made
-    # How many coins to keep on the wallet (only works when: swap_all_balance = True)
+    # True / False. If True, then refuel the entire balance.
+    swap_all_balance = False
+    # If the balance is less than this amount, no refuel will be made.
+    min_amount_swap = 0  
+    # How many coins to keep on the wallet (only works when: swap_all_balance = True).
     keep_value_from = 0
-    # Up to how many coins to keep on the wallet (only works when: swap_all_balance = True)
+    # Up to how many coins to keep on the wallet (only works when: swap_all_balance = True).
     keep_value_to = 0
-
-    # True if you want to check the gas. False if you want to perform refuel
-    get_layerzero_fee = False
-
-class FillerSettings:
-    '''
-    Gas filler via nogem
-
-    Chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
-           | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
-    '''
-
-    # Networks from which you want to perform refill
-    from_chain = ['optimism', 'arbitrum', 'polygon', 'bsc']  
-    # Networks to which you want to perform refuel (will pick up random amount of networks based on to_chains_count)
-    to_chains = ['gnosis', 'fuse', 'core', 'klaytn', 'celo', 'opbnb', 'viction']
-    # Count of destination chains (min and max)
-    to_chains_count = [1, 2]
-
-    #========================================Use Random Chains=========================================
-    # if False, will pick up random amount of chains (within to_chains_count range) from to_chains list. 
-    # if True, will use random cheap chains with total cost within cost_to_chains range.
-    use_random_chains = True 
-    # Min and max price in $ for one fill
-    cost_to_chains = [1, 2]
-
-class FillerUltraSettings:
-    '''
-    Ultra gas filler via nogem (use as many chains as possible)
-
-    Chains : optimism | bsc | polygon | arbitrum | avalanche | fantom | linea | celo | nova | canto | zora | scroll | gnosis | core | base | mantle | astar |
-           | conflux | fuse | gnosis | kava | klaytin | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
-    '''
-
-    # Networks from which you want to perform refill
-    from_chain = ['optimism', 'arbitrum', 'fantom', 'bsc']  
-
-    # Min and max price in $ for one fill. 
-    # Will find maximum amount of chains to which you can perform fill within cost_to_chains price range.
-    cost_to_chains = [1, 2]

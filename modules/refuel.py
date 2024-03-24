@@ -24,7 +24,6 @@ class Refuel:
             self.min_amount_swap = RefuelSettings.min_amount_swap
             self.keep_value_from = RefuelSettings.keep_value_from
             self.keep_value_to = RefuelSettings.keep_value_to
-            self.get_layerzero_fee = RefuelSettings.get_layerzero_fee
             self.manager = GasBoss(self.key, self.from_chain)
             self.module_str = f'{self.number} {self.manager.address} | refuel : {self.from_chain} => {self.to_chain}'
             
@@ -66,12 +65,8 @@ class Refuel:
         self.adapterParams = await self.get_adapterParams(self.value)
         self.module_str = f'{self.number} {self.manager.address} | refuel : {self.from_chain} => {self.to_chain}'
 
-        if self.get_layerzero_fee:
-            await self.check_refuel_fees()
-
     async def get_adapterParams(self, amount: int):
         minDstGas = await self.get_min_dst_gas_lookup(LAYERZERO_CHAINS_ID[self.to_chain], 0)   
-        print(minDstGas)    
         addressOnDist = Account().from_key(self.key).address
         return encode_packed(
             ["uint16", "uint256", "uint256", "address"],
@@ -122,27 +117,6 @@ class Refuel:
             logger.warning(error)
             return False
 
-    async def check_refuel_fees(self):
-        result = {}
-        for from_chain in NOGEM_REFUEL_CONTRACTS:
-            result.update({from_chain:{}})
-            adapterParams = await self.get_adapterParams(1)
-
-            for to_chain in LAYERZERO_CHAINS_ID:
-                if from_chain != to_chain:
-                    try:
-                        dst_contract_address = encode_packed(["address"], [NOGEM_REFUEL_CONTRACTS[to_chain]])
-                        send_value = await self.contract.functions.estimateSendFee(LAYERZERO_CHAINS_ID[to_chain], dst_contract_address, adapterParams).call()
-                        
-                        send_value = Web3.to_wei(send_value[0], 'ether')
-                        send_value = round(send_value * PRICES_NATIVE[from_chain])
-                        print(f'{from_chain} => {to_chain} : {send_value}', 'white')
-                        result[from_chain].update({to_chain:send_value})
-                    except Exception as error:
-                        print(f'{from_chain} => {to_chain} : None', 'white')
-                        result[from_chain].update({to_chain:None})
-        sys.exit()
-
     async def calculate_cost(self):
         contract_txn = await self.get_txn()
 
@@ -157,3 +131,8 @@ class Refuel:
     
     def get_dest_chains():
         return RefuelSettings.to_chain 
+    
+    def print_chains():
+        chains_list = list(NOGEM_REFUEL_CONTRACTS.keys())
+        for chain in chains_list:
+            print(chain, end=" | ")
