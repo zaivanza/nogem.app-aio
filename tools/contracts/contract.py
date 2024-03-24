@@ -18,7 +18,7 @@ LAYERZERO_CHAINS_ID = {
     'okx'       : 155,
     #'polygon_zkevm': 158,
     'canto'     : 159,
-    #'zksync'    : 165,
+    'zksync'    : 165,
     #'moonriver' : 167,
     'tenet'     : 173,
     'nova'      : 175,
@@ -77,7 +77,9 @@ NOGEM_CONTRACTS = {
     'orderly': '0x59FBcA19b8d71FC264Bf2D97506e6a37E64AF510',
     'xpla': '0xfED33D64740122fB090352eAf7B497D092fC2A0f',
     'astar': '0x7D8083C47DE0CB33180e1B130F6de78a41AeBe75',
-    'viction': "0xFb7EF0BbD8bFB5f129F995FbC34F4D786cCC63CF"
+    'viction': "0xFb7EF0BbD8bFB5f129F995FbC34F4D786cCC63CF",
+    'zksync': "0xBEc36178ff53DEac60B741174057EA7587f35b03",
+    'scroll': "0x6aa62615C117CEd068093D4c7BFf78289ceA945A"
 }
 
 NOGEM_REFUEL_CONTRACTS = {

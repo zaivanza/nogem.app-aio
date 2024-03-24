@@ -32,13 +32,12 @@ class MintSettings:
     Minting operation
 
     Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb 
-           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction |
+           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
     '''
     # The networks where NFTs will be minted.
-    chains = ['polygon','bsc', 'fantom']  
+    chains = ['zksync']  
     # The networks where NFTs will be minted.
-    amount_mint = [1, 2]  
-
+    amount_mint = [1, 3]  
 
 class BridgeSettings:
         '''
@@ -46,7 +45,7 @@ class BridgeSettings:
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
 
         Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
-               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction |
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
         '''
 
         # The source network where NFTs will be searched; the final choice is random.
@@ -63,13 +62,13 @@ class MintBridgeSettings:
         Combination of minting and bridging operations
 
         Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
-               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction |
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
         '''
 
         # Preferred source networks, will randomly pick up network with money for mint+bridge.
-        from_chain = ['optimism', 'bsc', 'linea', 'fantom']
+        from_chain = ['zksync', 'linea', 'scroll']
         # Preferred destination networks, will randomly pick up one destination network.
-        to_chain = ['conflux','arbitrum', 'orderly', 'nova']
+        to_chain = ['optimism', 'nova', 'celo', 'core']
         # Maximum acceptable cost for the mint+bridge in dollars ($).
         max_price = 3
         # Range defining the minimum and maximum number of NFTs to be minted and bridged.
