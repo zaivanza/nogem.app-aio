@@ -6,7 +6,6 @@ from tools.contracts.abi import ABI_FILLER, ABI_REFUEL
 from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
 from tools.gas_boss import GasBoss
 from web3 import Web3
-from eth_abi.packed import encode_packed
 
 from loguru import logger
 
@@ -20,7 +19,7 @@ class AutoFiller:
             self.cost_to_chains = AutoFillerSettings.cost_to_chains
             self.manager = GasBoss(self.key, self.from_chain)
             self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(NOGEM_FILLER_CONTRACTS[self.from_chain]), abi=ABI_FILLER)
-            self.module_str = f'{self.number} {self.manager.address} | filler : {self.from_chain} => {self.to_chains}'
+            self.module_str = f'{self.number} {self.manager.address} | auto filler : {self.from_chain} => {self.to_chains}'
 
     async def run(self, retry=0):
         logger.info(f'{self.module_str}')
@@ -33,7 +32,7 @@ class AutoFiller:
         if not contract_txn:
             logger.error(f'{self.module_str} | error getting contract_txn')
             return False
-        
+
         status, tx_link = await self.manager.send_tx(contract_txn)
 
         if status == 1:
@@ -137,6 +136,7 @@ class AutoFiller:
             chains_dict = {}      
             result_chains = []
             total_cost = 0
+            max_cost = random.uniform(*AutoFillerSettings.cost_to_chains)
 
             chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
             chains_list.remove(from_chain)
@@ -146,6 +146,8 @@ class AutoFiller:
                 to_chains.append(chain)
 
                 func = AutoFiller(number, key, from_chain, to_chains)
+                if not await func.has_balance():
+                    return False
                 
                 if func.is_supported_networks():
                     contract_txn, txn_is_ok = await func.get_test_txn()
@@ -160,7 +162,7 @@ class AutoFiller:
             chains_dict = dict(sorted(chains_dict.items(), key=lambda x:x[1]))
             
             for i in chains_dict:
-                if total_cost + chains_dict[i] < AutoFillerSettings.cost_to_chains[1]:
+                if total_cost + chains_dict[i] < max_cost:
                     to_chains = []
                     to_chains.append(i)
                     func = AutoFiller(number, key, from_chain, to_chains)

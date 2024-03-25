@@ -21,7 +21,7 @@ async def process_module(func, wallets):
                 try:
                     number += 1
                     dest_chain = await get_dest_chain(func)
-                    if is_private_key:
+                    if is_private_key(key):
                         if dest_chain is not False:
                             wallet_number =  f'[{number}/{len(wallets)}]'
                             mint_count = random.randint(*MintSettings.amount_mint)
