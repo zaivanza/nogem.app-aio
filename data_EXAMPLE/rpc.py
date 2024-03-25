@@ -155,4 +155,10 @@ RPC = {
         "token": "ZETA",
         "chain_id": 7000 
     },
+    "opbnb": {
+        "rpc": "https://opbnb-rpc.publicnode.com",
+        "scan": "https://opbnb.bscscan.com/tx",
+        "token": "BNB",
+        "chain_id": 204 
+    },
 }
