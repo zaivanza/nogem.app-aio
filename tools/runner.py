@@ -1,4 +1,7 @@
 import random
+
+from web3 import Web3
+from data_EXAMPLE.rpc import RPC
 from modules.bridge import Bridge
 from modules.filler import Filler
 from modules.auto_filler import AutoFiller
@@ -51,11 +54,12 @@ async def get_dest_chain(func):
 
 async def find_chain_with_balance(func, key, number, dest_chain, mint_count): 
     try:
+        address = get_address(key)
         base_chains = func.get_base_chains()
         random.shuffle(base_chains)
 
         for chain in base_chains:
-            logger.info(f"{number} Checking balance in {chain}")
+            logger.info(f"{number} {address} Checking balance in {chain}")
             to_chain = dest_chain
 
             if func == Filler and FillerSettings.use_random_chains:
@@ -79,3 +83,9 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
 def get_func(func, key, number, base_chain, dest_chain, mint_count=0):
     function_instance = func(number, key, base_chain, dest_chain) if func != Mint else func(number, key, base_chain, mint_count)
     return function_instance
+
+def get_address(key):
+    rpc = RPC['ethereum']['rpc']
+    w3 = Web3(Web3.HTTPProvider(rpc))
+    account = w3.eth.account.from_key(key)
+    return account.address

@@ -140,36 +140,34 @@ class AutoFiller:
 
             chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
             chains_list.remove(from_chain)
+
+            function = AutoFiller(number, key, from_chain, None)
+            if not await function.has_balance():
+                return False
             
             for chain in chains_list:
                 to_chains = []
                 to_chains.append(chain)
 
                 func = AutoFiller(number, key, from_chain, to_chains)
-                if not await func.has_balance():
-                    return False
-                
                 if func.is_supported_networks():
                     contract_txn, txn_is_ok = await func.get_test_txn()
 
                 if txn_is_ok:
-                    cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
-                    if cost != 0:
-                        cost_native = func.manager.web3.from_wei(cost,'ether')
-                        cost_usd = float(cost_native) * PRICES_NATIVE[from_chain]
+                    cost_usd = func.get_cost_usd(contract_txn)
+                    if cost_usd != 0:
                         chains_dict.update({chain:cost_usd})
             
             chains_dict = dict(sorted(chains_dict.items(), key=lambda x:x[1]))
             
             for i in chains_dict:
                 if total_cost + chains_dict[i] < max_cost:
-                    to_chains = []
-                    to_chains.append(i)
-                    func = AutoFiller(number, key, from_chain, to_chains)
-                    if func.is_supported_networks():
-                        result_chains.append(i)
-                        total_cost += chains_dict[i]
-                else:
+                    result_chains.append(i)
+                    func = AutoFiller(number, key, from_chain, result_chains)
+                    contract_txn, txn_is_ok = await func.get_test_txn()
+                    cost_usd = func.get_cost_usd(contract_txn)
+                    total_cost = cost_usd              
+                else:  
                     return result_chains
                             
         except Exception as error:
@@ -190,3 +188,9 @@ class AutoFiller:
                 if (LAYERZERO_CHAINS_ID[self.from_chain], LAYERZERO_CHAINS_ID[chain]) in EXCLUDED_LZ_PAIRS or (LAYERZERO_CHAINS_ID[chain], LAYERZERO_CHAINS_ID[self.from_chain]) in EXCLUDED_LZ_PAIRS:
                     return False
             return True
+    
+    def get_cost_usd(self, contract_txn):
+        cost = contract_txn['value'] + contract_txn['gasPrice']*contract_txn['gas']*1.2
+        cost_native = self.manager.web3.from_wei(cost,'ether')
+        cost_usd = float(cost_native) * PRICES_NATIVE[self.from_chain]
+        return cost_usd
