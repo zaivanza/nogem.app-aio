@@ -1,7 +1,7 @@
 import random
 
 from web3 import Web3
-from data_EXAMPLE.rpc import RPC
+from data.rpc import RPC
 from modules.bridge import Bridge
 from modules.filler import Filler
 from modules.auto_filler import AutoFiller
