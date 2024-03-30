@@ -97,7 +97,11 @@ async def get_chain_prices():
         for chain, price in zip(chains.keys(), fetched_prices):
             prices[chain] = price
             if price == 0:
-                logger.info(f'Failed to fetch price for {chain}. Setting price to 0.')
+                price =  await fetch_price(session, chains[chain])
+                if price != 0:
+                    prices[chain] = price
+                else:
+                    logger.info(f'Failed to fetch price for {chain}. Setting price to 0.')
 
     return prices
 

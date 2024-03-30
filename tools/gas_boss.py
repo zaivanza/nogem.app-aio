@@ -85,8 +85,8 @@ class GasBoss:
             except:
                 time_stamp = int(time.time())
                 if time_stamp-start_time_stamp > MAX_TX_WAITING_TIME:
-                    logger.info(f'Did not receive tx_status for {MAX_TX_WAITING_TIME} sec, assuming that tx is an unsuccess')
-                    return 0
+                    logger.info(f'Did not receive tx_status for {MAX_TX_WAITING_TIME} sec, assuming that tx is a success')
+                    return 1
                 await asyncio.sleep(1)
 
     async def send_tx(self, contract_txn):
