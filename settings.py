@@ -1,6 +1,6 @@
 # --- Settings ---
 IS_SLEEP = True         # Enable/disable delay between wallets
-DELAY_SLEEP = [30, 60]  # Delay range between wallets (seconds)
+DELAY_SLEEP = [100, 200]  # Delay range between wallets (seconds)
 SHUFFLE_WALLETS = True  # Enable/disable random wallet shuffling
 RETRY = 0               # Number of retries on errors/failures
 MAX_WAITING_NFT = 200   # Maximum duration (in seconds) to await the arrival of the NFT in the destination network before timing out.
@@ -14,7 +14,7 @@ class AutoFillerSettings:
     '''
 
     # Networks from which you want to perform refill. Will choose one network with balance.
-    from_chain =  ['optimism', 'arbitrum', 'fantom', 'bsc', 'polygon'] 
+    from_chain =  ['optimism', 'arbitrum', 'fantom', 'polygon', 'avalanche', 'core', 'celo'] 
     # Min and max price in $ for one fill. Will pick up maximum amount of networks for your price range mentioned in 'cost_to_chains'.
     cost_to_chains = [1, 2]
 
@@ -23,7 +23,7 @@ class FillerSettings:
     Gas filler via nogem
 
     Chains : arbitrum | polygon | bsc | optimism | fantom | core | nova | mantle | avalanche | base | linea | scroll | zora | astar | aurora | celo 
-           | conflux | fuse | gnosis | kava | klaytn | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | 
+           | conflux | fuse | gnosis | kava | klaytn | manta | metis | opbnb | telos | tenet | horizen | okx | orderly | rari | viction | xpla | base
     '''
 
     # Networks from which you want to perform refill.
@@ -47,10 +47,10 @@ class MintSettings:
     Minting operation
 
     Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb 
-           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
+           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast
     '''
     # The networks where NFTs will be minted.
-    chains = ['fantom']  
+    chains = ['base']  
     # The networks where NFTs will be minted.
     amount_mint = [1, 1]  
 
@@ -60,7 +60,7 @@ class BridgeSettings:
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
 
         Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
-               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast
         '''
 
         # The source network where NFTs will be searched; the final choice is random.
@@ -77,7 +77,7 @@ class MintBridgeSettings:
         Combination of minting and bridging operations
 
         Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
-               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast
         '''
 
         # Preferred source networks, will randomly pick up network with money for mint+bridge.
@@ -95,7 +95,7 @@ class RefuelSettings:
     Gas refuel via nogem
 
      Chains : arbitrum | nova | bsc | avalanche | polygon | fantom | celo | fuse | gnosis | klaytn | core | tenet | kava | mantle 
-            | beam | telos | opbnb | aurora | conflux | scroll | horizen | manta | xpla | okx | rari | zora | optimism | loot | orderly | 
+            | beam | telos | opbnb | aurora | conflux | scroll | horizen | manta | xpla | okx | rari | zora | optimism | loot | orderly | base | blast
     '''
 
     # Networks from which you want to perform refuel.
