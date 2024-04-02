@@ -47,7 +47,7 @@ class MintSettings:
     Minting operation
 
     Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb 
-           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast
+           | nova | arbitrum | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast | mode
     '''
     # The networks where NFTs will be minted.
     chains = ['base']  
@@ -60,7 +60,7 @@ class BridgeSettings:
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
 
         Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
-               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast | mode
         '''
 
         # The source network where NFTs will be searched; the final choice is random.
@@ -77,7 +77,7 @@ class MintBridgeSettings:
         Combination of minting and bridging operations
 
         Chains : bsc | celo | beam | manta | kava | linea | fantom | gnosis | tenet | aurora | core | polygon | opbnb | nova | arbitrum 
-               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast
+               | optimism | zora | okx | rari | loot | orderly | xpla | astar | viction | zksync | scroll | base | blast | mode
         '''
 
         # Preferred source networks, will randomly pick up network with money for mint+bridge.
@@ -95,7 +95,7 @@ class RefuelSettings:
     Gas refuel via nogem
 
      Chains : arbitrum | nova | bsc | avalanche | polygon | fantom | celo | fuse | gnosis | klaytn | core | tenet | kava | mantle 
-            | beam | telos | opbnb | aurora | conflux | scroll | horizen | manta | xpla | okx | rari | zora | optimism | loot | orderly | base | blast
+            | beam | telos | opbnb | aurora | conflux | scroll | horizen | manta | xpla | okx | rari | zora | optimism | loot | orderly | base | blast | mode
     '''
 
     # Networks from which you want to perform refuel.
