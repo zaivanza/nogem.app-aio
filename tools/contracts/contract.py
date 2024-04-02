@@ -45,6 +45,7 @@ LAYERZERO_CHAINS_ID = {
     'pgn'       : 218,
     'rari'      : 235,
     'blast'     : 243,
+    'mode'      : 260,
 }
 
 NOGEM_CONTRACTS = {
