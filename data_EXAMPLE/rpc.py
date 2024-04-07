@@ -155,6 +155,12 @@ RPC = {
         "token": "ZETA",
         "chain_id": 7000 
     },
+    "mode": {
+        "rpc": "https://1rpc.io/mode",
+        "scan": "https://explorer.mode.network/tx",
+        "token": "ETH",
+        "chain_id": 34443
+    },
     "opbnb": {
         "rpc": "https://opbnb-rpc.publicnode.com",
         "scan": "https://opbnb.bscscan.com/tx",
