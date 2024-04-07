@@ -98,6 +98,7 @@ async def get_chain_prices():
         'mantle': 'MNT',
         'zeta': 'ZETA',
         'blast': 'ETH',
+        'mode': 'ETH',
     }
 
     prices = {chain: 0 for chain in chains.keys()}
