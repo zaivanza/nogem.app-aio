@@ -1,7 +1,7 @@
 from data.rpc import RPC
 from config import ERC20_ABI, MAX_TX_WAITING_TIME, PRICES_NATIVE
-from settings import RETRY
-from tools.helpers import sleeping, decimalToInt
+from settings import MAX_TX_COST
+from tools.helpers import sleeping, decimalToInt, round_to
 
 import time
 from loguru import logger
@@ -89,8 +89,22 @@ class GasBoss:
                     return 1
                 await asyncio.sleep(1)
 
+    async def get_total_fee(self, contract_txn) -> bool:
+        gas = int(contract_txn['gas'] * contract_txn['gasPrice'])
+        gas = decimalToInt(gas, 18) * PRICES_NATIVE[self.chain]
+
+        logger.info(f'total_gas : {round_to(gas)} $')
+        if gas > MAX_TX_COST:
+            logger.info(f'gas is too high : {round_to(gas)}$ > {MAX_TX_COST}$')
+            return False
+        else:
+            return True
+
     async def send_tx(self, contract_txn):
         try:
+            if not await self.get_total_fee(contract_txn):
+                return False, "gas is too high"
+
             if contract_txn["value"] >= 0:
                 tx_hash = await self.sign_tx(contract_txn)
                 status  = await self.get_status_tx(tx_hash)

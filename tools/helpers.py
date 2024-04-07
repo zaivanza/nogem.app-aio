@@ -10,12 +10,23 @@ from tools.contracts.abi import ABI_NOGEM
 from tools.contracts.contract import NOGEM_CONTRACTS
 from web3 import AsyncHTTPProvider, Web3
 from web3.eth import AsyncEth
+import math
 
 from loguru import logger
 
+def round_to(num, digits=3):
+    try:
+        if num == 0: return 0
+        scale = int(-math.floor(math.log10(abs(num - int(num))))) + digits - 1
+        if scale < digits: scale = digits
+        return round(num, scale)
+    except: return num
+
+def intToDecimal(qty, decimal):
+    return int(qty * 10**decimal)
 
 def decimalToInt(qty, decimal):
-    return float(qty * 10**decimal)
+    return float(qty / 10**decimal)
 
 def load_json(filepath: Path | str):
     with open(filepath, "r") as file:

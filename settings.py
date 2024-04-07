@@ -1,9 +1,10 @@
 # --- Settings ---
 IS_SLEEP = True         # Enable/disable delay between wallets
-DELAY_SLEEP = [100, 200]  # Delay range between wallets (seconds)
+DELAY_SLEEP = [100, 200]   # Delay range between wallets (seconds)
 SHUFFLE_WALLETS = True  # Enable/disable random wallet shuffling
 RETRY = 0               # Number of retries on errors/failures
 MAX_WAITING_NFT = 200   # Maximum duration (in seconds) to await the arrival of the NFT in the destination network before timing out.
+MAX_TX_COST = 0.5       # Maximum transaction fee in USD
 
 class AutoFillerSettings:
     '''
@@ -52,7 +53,7 @@ class MintSettings:
     # The networks where NFTs will be minted.
     chains = ['base']  
     # The networks where NFTs will be minted.
-    amount_mint = [1, 1]  
+    amount_mint = [1, 3]  
 
 class BridgeSettings:
         '''
