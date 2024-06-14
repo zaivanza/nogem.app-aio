@@ -4,7 +4,7 @@ from config import PRICES_NATIVE
 from eth_account import Account
 from settings import RETRY, RefuelSettings
 from tools.contracts.abi import ABI_REFUEL
-from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_REFUEL_CONTRACTS
+from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, LAYERZERO_REFUEL
 from tools.gas_boss import GasBoss
 from web3 import Web3
 from eth_abi.packed import encode_packed
@@ -58,7 +58,7 @@ class Refuel:
 
     async def setup(self):
         self.manager = GasBoss(self.key, self.from_chain)
-        self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(NOGEM_REFUEL_CONTRACTS[self.from_chain]), abi=ABI_REFUEL)
+        self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(LAYERZERO_REFUEL[self.from_chain]), abi=ABI_REFUEL)
         self.amount = await self.manager.get_amount_in(self.keep_value_from, self.keep_value_to, self.swap_all_balance, '', self.amount_from, self.amount_to)
         self.token_data = await self.manager.get_token_info('')
         self.value = Web3.to_wei(self.amount, 'ether')
@@ -84,7 +84,7 @@ class Refuel:
 
             await self.setup()
 
-            dst_contract_address = encode_packed(["address"], [NOGEM_REFUEL_CONTRACTS[self.to_chain]])
+            dst_contract_address = encode_packed(["address"], [LAYERZERO_REFUEL[self.to_chain]])
             send_value = await self.contract.functions.estimateSendFee(LAYERZERO_CHAINS_ID[self.to_chain], dst_contract_address, self.adapterParams).call()
             contract_txn = await self.contract.functions.refuel(
                     LAYERZERO_CHAINS_ID[self.to_chain],
@@ -133,6 +133,6 @@ class Refuel:
         return RefuelSettings.to_chain 
     
     def print_chains():
-        chains_list = list(NOGEM_REFUEL_CONTRACTS.keys())
+        chains_list = list(LAYERZERO_REFUEL.keys())
         for chain in chains_list:
             print(chain, end=" | ")

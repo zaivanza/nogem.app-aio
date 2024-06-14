@@ -3,7 +3,7 @@ import random
 from config import FILLER_VALUE, PRICES_NATIVE
 from settings import RETRY, FillerSettings
 from tools.contracts.abi import ABI_FILLER
-from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, NOGEM_FILLER_CONTRACTS, NOGEM_REFUEL_CONTRACTS
+from tools.contracts.contract import EXCLUDED_LZ_PAIRS, LAYERZERO_CHAINS_ID, LAYERZERO_FILLER, LAYERZERO_REFUEL
 from tools.gas_boss import GasBoss
 from web3 import Web3
 from eth_abi.packed import encode_packed
@@ -21,7 +21,7 @@ class Filler:
             self.use_random_chains = FillerSettings.use_random_chains
             self.cost_to_chains = FillerSettings.cost_to_chains
             self.manager = GasBoss(self.key, self.from_chain)
-            self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(NOGEM_FILLER_CONTRACTS[self.from_chain]), abi=ABI_FILLER)
+            self.contract = self.manager.web3.eth.contract(address=Web3.to_checksum_address(LAYERZERO_FILLER[self.from_chain]), abi=ABI_FILLER)
             self.module_str = f'{self.number} {self.manager.address} | filler : {self.from_chain} => {self.to_chains}'
 
     async def run(self, retry=0):
@@ -147,7 +147,7 @@ class Filler:
             result_chains = []
             total_cost = 0
 
-            chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+            chains_list = list(LAYERZERO_FILLER.keys())
             chains_list.remove(from_chain)
             
             while len(chains_list) != 1:
@@ -204,7 +204,7 @@ class Filler:
             return True
     
     async def check_chains(number, key, from_chain):
-            chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+            chains_list = list(LAYERZERO_FILLER.keys())
             chains_list.remove(from_chain)
 
             print(f'base chain: {from_chain}')
@@ -224,6 +224,6 @@ class Filler:
                     print('-', chain)
 
     def print_chains():
-        chains_list = list(NOGEM_FILLER_CONTRACTS.keys())
+        chains_list = list(LAYERZERO_FILLER.keys())
         for chain in chains_list:
             print(chain, end=" | ")

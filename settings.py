@@ -1,10 +1,108 @@
 # --- Settings ---
 IS_SLEEP = True         # Enable/disable delay between wallets
-DELAY_SLEEP = [100, 200]   # Delay range between wallets (seconds)
+DELAY_SLEEP = [15, 40]   # Delay range between wallets (seconds)
 SHUFFLE_WALLETS = True  # Enable/disable random wallet shuffling
 RETRY = 0               # Number of retries on errors/failures
 MAX_WAITING_NFT = 200   # Maximum duration (in seconds) to await the arrival of the NFT in the destination network before timing out.
 MAX_TX_COST = 0.5       # Maximum transaction fee in USD
+
+
+#====================HYPERLANE MODULES==============================|
+
+class MintSettingsHL:
+    '''
+    Minting operation
+
+    Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+    '''
+    # The networks where NFTs will be minted.
+    chains = ['optimism']
+    # Amount of NFTs to be minted.
+    amount_mint = [1, 1]  
+
+class BridgeNFTSettingsHL:
+        '''
+        Bridging operation
+        This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
+
+        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        '''
+
+        # The source network where NFTs will be searched; the final choice is random.
+        from_chain = ['optimism']
+        # Potential destination networks; the final choice is random.
+        to_chain = ['polygon']
+        # The number of NFTs to bridge.
+        amount = 1  
+        # If True, all available NFTs will be bridged, even if they exceed the specified 'amount' value.
+        bridge_all = False
+
+class MintBridgeSettingsHL:
+        '''
+        Combination of minting and bridging operations
+
+        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        '''
+
+        # Preferred source networks, will randomly pick up network with money for mint+bridge.
+        from_chain = ['optimism']
+        # Preferred destination networks, will randomly pick up one destination network.
+        to_chain = ['polygon']
+        # Maximum acceptable cost for the mint+bridge in dollars ($).
+        max_price = 0.9
+        # Range defining the minimum and maximum number of NFTs to be minted and bridged.
+        amount = [1, 1]
+
+class ClaimSettingsHL:
+    '''
+    Claiming operation
+
+    Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+    '''
+    # The networks where tokens will be claimed.
+    chains = ['optimism']
+    # Amount of tokens to be claimed per one claim.
+    amount_claim = [0.1, 0.5]  
+    # Count of claims.
+    count_claim = [1, 1]  
+
+
+class BridgeTokenSettingsHL:
+        '''
+        Bridging tokens operation
+        This function locates tokens in the source chain and bridges them to a randomly selected destination chain.
+
+        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        '''
+
+        # The source network where NFTs will be searched; the final choice is random.
+        from_chain = ['optimism']
+        # Potential destination networks; the final choice is random.
+        to_chain = ['arbitrum']
+        # The amount of tokens to bridge.
+        amount = [0.01, 0.05]  
+        # If True, all available tokens will be bridged, even if they exceed the specified 'amount' value.
+        bridge_all = False
+
+
+class ClaimBridgeSettingsHL:
+        '''
+        Combination of claiming and bridging operations
+
+        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        '''
+
+        # Preferred source networks, will randomly pick up network with money for mint+bridge.
+        from_chain = ['optimism']
+        # Preferred destination networks, will randomly pick up one destination network.
+        to_chain = ['polygon']
+        # Maximum acceptable cost for the mint+bridge in dollars ($).
+        max_price = 0.9
+        # Range defining the minimum and maximum number of NFTs to be minted and bridged.
+        amount = [1, 1]
+
+
+#====================LAYERZERO MODULES==============================|
 
 class AutoFillerSettings:
     '''
@@ -43,7 +141,7 @@ class FillerSettings:
     # Min and max price in $ for one fill.
     cost_to_chains = [1, 2]
 
-class MintSettings:
+class MintSettingsLZ:
     '''
     Minting operation
 
@@ -52,10 +150,10 @@ class MintSettings:
     '''
     # The networks where NFTs will be minted.
     chains = ['base']  
-    # The networks where NFTs will be minted.
+    # Amount of NFTs to be minted.
     amount_mint = [1, 3]  
 
-class BridgeSettings:
+class BridgeSettingsLZ:
         '''
         Bridging operation
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
@@ -73,7 +171,7 @@ class BridgeSettings:
         # If True, all available NFTs will be bridged, even if they exceed the specified 'amount' value.
         bridge_all = False
 
-class MintBridgeSettings:
+class MintBridgeSettingsLZ:
         '''
         Combination of minting and bridging operations
 

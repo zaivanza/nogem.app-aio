@@ -48,7 +48,59 @@ LAYERZERO_CHAINS_ID = {
     'mode'      : 260,
 }
 
-NOGEM_CONTRACTS = {
+HYPERLANE_CHAINS_ID = {
+'arbitrum'	      : 42161,
+'ancient8'	      : 888888888,
+'avalanche'	      : 43114,
+'bsc'	          : 56,
+'celo'	          : 42220,
+'ethereum'	      : 1,
+'neutron'	      : 1853125230,
+'manta'	          : 169,
+'moonbeam'	      : 1284,
+'optimism'	      : 10,
+'polygon'	      : 137,
+'gnosis'	      : 100,
+'base'	          : 8453,
+'scroll'	      : 534352,
+'polygon_zkevm'	  : 1101,
+'injective'	      : 6909546,
+'injective_zkevm' : 2525,
+'iiction'	      : 88,
+}
+
+HYPERLANE_HNFT = {
+    "arbitrum": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "avalanche": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "base": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "bsc": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "celo": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "gnosis": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "moonbeam": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "optimism": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "polygon": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+    "polygon_zkevm": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "scroll": "0x6ae540f1c3A96a8628d52B416eC1Bf72932f83FE",
+}
+
+
+HYPERLANE_ERC20 = {
+    "optimism": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "celo": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "avalanche": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "bsc": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "moonbeam": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "arbitrum": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "polygon": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "base": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "scroll": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "gnosis": "0xEcCF8254558FCB1Ca02047Ae8C1b8A2BF4aD0Fc0",
+    "manta": "0x2d71Dde9dba6eF70AA26C0163437D230A25915cA",
+    "polygon_zkevm": "0xEcCF8254558FCB1Ca02047Ae8C1b8A2BF4aD0Fc0"
+}
+
+
+LAYERZERO_ONFT = {
     "nova": "0x7564b019e013d90302BdD6FB6C9763d5989bEd0c",
     "fantom": "0x076FC64046E50A78267563470A159B6AbDDe9192",
     "mantle": "0xE73c6F1B6F43142Ea545053DaAB6Fc2c514DfeAA",
@@ -90,7 +142,7 @@ NOGEM_CONTRACTS = {
     "mode": "0x92214B740B394894B38Ed80a1659eea862Ce89cd",
 }
 
-NOGEM_REFUEL_CONTRACTS = {
+LAYERZERO_REFUEL = {
     "fantom": "0xa6ce244C423Af2bCef522fc5Fbc1df28528Da2e0",
     "mantle": "0x6D594b9FCb39E7E8942b431C0826BEeaE25bA39a",
     "gnosis": "0x92E5b93af8fB4eE8b1db0ac8dF85a6Bfa15651eE",
@@ -127,7 +179,7 @@ NOGEM_REFUEL_CONTRACTS = {
     "scroll": "0x5c36F7A7090877B6c3EB2C554865f7F125B8f312",
 } 
 
-NOGEM_FILLER_CONTRACTS = {
+LAYERZERO_FILLER = {
     "arbitrum": "0x2212291025d65D6cFe91De3f0e1a6cAd4dC4AE36",
     "polygon": "0x2809702f7900748fd579bf7d2b44b17437110cc7",
     "bsc": "0xE7Dba4c592114f821822a7e9eA490541C6121Abb",

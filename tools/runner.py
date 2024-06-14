@@ -2,13 +2,19 @@ import random
 
 from web3 import Web3
 from data.rpc import RPC
-from modules.bridge import Bridge
-from modules.filler import Filler
-from modules.auto_filler import AutoFiller
-from modules.mint import Mint
-from modules.mint_bridge import MintBridge
-from modules.refuel import Refuel
-from settings import MintSettings
+from modules.hyperlane.bridge_hl import BridgeHL
+from modules.hyperlane.bridge_tokens_hl import BridgeTokenHL
+from modules.hyperlane.claim_bridge_hl import ClaimBridgeTokenHL
+from modules.hyperlane.claim_hl import ClaimHL
+from modules.hyperlane.mint_bridge_hl import MintBridgeHL
+from modules.layerzero.bridge import Bridge
+from modules.layerzero.filler import Filler
+from modules.layerzero.auto_filler import AutoFiller
+from modules.layerzero.mint import Mint
+from modules.layerzero.mint_bridge import MintBridge
+from modules.hyperlane.mint_hl import MintHL
+from modules.layerzero.refuel import Refuel
+from settings import ClaimBridgeSettingsHL, ClaimSettingsHL, MintBridgeSettingsHL, MintBridgeSettingsLZ, MintSettingsHL, MintSettingsLZ
 from settings import IS_SLEEP, DELAY_SLEEP, FillerSettings
 
 from tools.helpers import async_sleeping, is_private_key
@@ -27,7 +33,7 @@ async def process_module(func, wallets):
                     if is_private_key(key):
                         if dest_chain is not False:
                             wallet_number =  f'[{number}/{len(wallets)}]'
-                            mint_count = random.randint(*MintSettings.amount_mint)
+                            mint_count = get_amount_mint(func)
 
                             base_chain, dest_chain = await find_chain_with_balance(func, key, wallet_number, dest_chain, mint_count) 
 
@@ -44,7 +50,7 @@ async def process_module(func, wallets):
                     logger.error(error)
 
 async def get_dest_chain(func):
-    if func == Bridge or func == MintBridge or func == Refuel:
+    if func in (Bridge, MintBridge, Refuel, BridgeHL, MintBridgeHL, BridgeTokenHL, ClaimBridgeTokenHL):
         return random.choice(func.get_dest_chains())
     elif func == Filler:
         if not FillerSettings.use_random_chains:
@@ -81,11 +87,29 @@ async def find_chain_with_balance(func, key, number, dest_chain, mint_count):
         logger.error(error)
 
 def get_func(func, key, number, base_chain, dest_chain, mint_count=0):
-    function_instance = func(number, key, base_chain, dest_chain) if func != Mint else func(number, key, base_chain, mint_count)
-    return function_instance
+    if func in (Mint, MintHL, ClaimHL):
+        return func(number, key, base_chain, mint_count)
+    elif func in (MintBridge, MintBridgeHL, ClaimBridgeTokenHL):
+        return func(number, key, base_chain, dest_chain, mint_count)
+    else:
+        return func(number, key, base_chain, dest_chain)
 
 def get_address(key):
     rpc = RPC['ethereum']['rpc']
     w3 = Web3(Web3.HTTPProvider(rpc))
     account = w3.eth.account.from_key(key)
     return account.address
+
+def get_amount_mint(func):
+    if func == MintHL:
+        return  random.randint(*MintSettingsHL.amount_mint)
+    elif func == MintBridgeHL:
+        return random.randint(*MintBridgeSettingsHL.amount)
+    elif func == ClaimHL:
+        return random.randint(*ClaimSettingsHL.count_claim)
+    elif func == ClaimBridgeTokenHL:
+        return random.randint(*ClaimBridgeSettingsHL.amount)
+    elif func == Mint:
+        return random.randint(*MintSettingsLZ.amount_mint)
+    elif func == MintBridge:
+        return random.randint(*MintBridgeSettingsLZ.amount)
