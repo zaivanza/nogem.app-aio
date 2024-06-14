@@ -1,8 +1,8 @@
 
 import asyncio
-from modules.mint import get_contract
-from tools.contracts.contract import NOGEM_CONTRACTS, ZERO_ADDRESS,LAYERZERO_CHAINS_ID, EXCLUDED_LZ_PAIRS
-from settings import BridgeSettings
+from modules.layerzero.mint import get_contract_lz
+from tools.contracts.contract import LAYERZERO_ONFT, ZERO_ADDRESS,LAYERZERO_CHAINS_ID, EXCLUDED_LZ_PAIRS
+from settings import BridgeSettingsLZ
 from settings import DELAY_SLEEP, RETRY
 from tools.gas_boss import GasBoss
 from tools.helpers import async_sleeping, get_balance_nfts_amount, get_balance_nfts_id
@@ -57,10 +57,10 @@ class Bridge:
                 await async_sleeping(*DELAY_SLEEP)
     
     def get_base_chains():
-        return BridgeSettings.from_chain
+        return BridgeSettingsLZ.from_chain
     
     def get_dest_chains():
-        return BridgeSettings.to_chain
+        return BridgeSettingsLZ.to_chain
 
     async def estimateSendFee(
             self,
@@ -140,7 +140,7 @@ class Bridge:
             return False
     
     async def get_bridge_details(self):
-        self.contract = await get_contract(self.from_chain)
+        self.contract = await get_contract_lz(self.from_chain)
         nft_count = await get_balance_nfts_amount(self.contract, self.manager.address) 
         tokens_ids = [await get_balance_nfts_id(self.contract, self.manager.address, i) for i in range(nft_count)]
         return(nft_count, tokens_ids)
@@ -148,10 +148,10 @@ class Bridge:
     def get_bridge_count(self, nft_count):
         if self.count !=0:
             return self.count
-        elif BridgeSettings.bridge_all:
+        elif BridgeSettingsLZ.bridge_all:
             return nft_count
         else:
-            return BridgeSettings.amount
+            return BridgeSettingsLZ.amount
             
         
     async def calculate_cost(self):
@@ -173,7 +173,7 @@ class Bridge:
         return total_cost
 
     async def check_chains(number, key, from_chain):
-            chains_list = list(NOGEM_CONTRACTS.keys())
+            chains_list = list(LAYERZERO_ONFT.keys())
             chains_list.remove(from_chain)
 
             print(f'base chain: {from_chain}')
@@ -188,6 +188,6 @@ class Bridge:
                     print('-', chain)
 
     def print_chains():
-        chains_list = list(NOGEM_CONTRACTS.keys())
+        chains_list = list(LAYERZERO_ONFT.keys())
         for chain in chains_list:
             print(chain, end=" | ")
