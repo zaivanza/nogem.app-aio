@@ -11,9 +11,9 @@ MAX_TX_COST = 0.5       # Maximum transaction fee in USD
 
 class MintSettingsHL:
     '''
-    Minting operation
+    Minting operation via Hyperlane
 
-    Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+    Chains : arbitrum | avalanche | base | bsc | celo | gnosis | moonbeam | optimism | polygon | polygon_zkevm | scroll
     '''
     # The networks where NFTs will be minted.
     chains = ['optimism']
@@ -22,10 +22,11 @@ class MintSettingsHL:
 
 class BridgeNFTSettingsHL:
         '''
-        Bridging operation
+        Bridging operation via Hyperlane
+
         This function locates NFTs in the source chain and bridges them to a randomly selected destination chain.
 
-        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | moonbeam | optimism | polygon | polygon_zkevm | scroll
         '''
 
         # The source network where NFTs will be searched; the final choice is random.
@@ -39,9 +40,9 @@ class BridgeNFTSettingsHL:
 
 class MintBridgeSettingsHL:
         '''
-        Combination of minting and bridging operations
+        Combination of minting and bridging operations via Hyperlane
 
-        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | moonbeam | optimism | polygon | polygon_zkevm | scroll
         '''
 
         # Preferred source networks, will randomly pick up network with money for mint+bridge.
@@ -57,11 +58,11 @@ class ClaimSettingsHL:
     '''
     Claiming operation
 
-    Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+    Chains : arbitrum | celo |  avalanche | base | bsc | gnosis | manta | moonbeam | optimism | polygon | polygon_zkevm | scroll
     '''
     # The networks where tokens will be claimed.
     chains = ['optimism']
-    # Amount of tokens to be claimed per one claim.
+    # Amount of tokens to be claimed per one claim (max 10 tokens per claim).
     amount_claim = [0.1, 0.5]  
     # Count of claims.
     count_claim = [1, 1]  
@@ -72,10 +73,10 @@ class BridgeTokenSettingsHL:
         Bridging tokens operation
         This function locates tokens in the source chain and bridges them to a randomly selected destination chain.
 
-        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        Chains : arbitrum | celo |  avalanche | base | bsc | gnosis | manta | moonbeam | optimism | polygon | polygon_zkevm | scroll
         '''
 
-        # The source network where NFTs will be searched; the final choice is random.
+        # The source network where tokens will be searched; the final choice is random.
         from_chain = ['optimism']
         # Potential destination networks; the final choice is random.
         to_chain = ['arbitrum']
@@ -89,17 +90,17 @@ class ClaimBridgeSettingsHL:
         '''
         Combination of claiming and bridging operations
 
-        Chains : arbitrum | avalanche | base | bsc | celo | gnosis | manta | moonbeam | optimism | polygon | scroll | viction
+        Chains : arbitrum | celo |  avalanche | base | bsc | gnosis | manta | moonbeam | optimism | polygon | polygon_zkevm | scroll
         '''
 
-        # Preferred source networks, will randomly pick up network with money for mint+bridge.
+        # Preferred source networks, will randomly pick up network with money for claim+bridge.
         from_chain = ['optimism']
         # Preferred destination networks, will randomly pick up one destination network.
         to_chain = ['polygon']
-        # Maximum acceptable cost for the mint+bridge in dollars ($).
+        # Maximum acceptable cost for the claim+bridge in dollars ($).
         max_price = 0.9
-        # Range defining the minimum and maximum number of NFTs to be minted and bridged.
-        amount = [1, 1]
+        # Range defining the minimum and maximum amount of tokens to be claimed and bridged.
+        amount = [0.01, 0.09]
 
 
 #====================LAYERZERO MODULES==============================|
