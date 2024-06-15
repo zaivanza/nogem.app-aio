@@ -17,11 +17,11 @@ class BridgeTokenHL(Bridge):
         elif not tokens_amount:
             logger.warning(f'{self.module_str} | error getting tokens balance')
             return False
-        elif tokens_amount < BridgeTokenSettingsHL.amount[1]:
-            logger.warning(f'{self.module_str} | token balance is less than bridge amount in settings.py')
-            return False
 
         self.count = self.get_bridge_amount(tokens_amount)
+        if tokens_amount < self.count:
+            logger.warning(f'{self.module_str} | not enough tokens balance')
+            return False
 
         contract_txn = await self.get_txn()
         if not contract_txn:
